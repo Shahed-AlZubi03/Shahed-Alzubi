@@ -13,7 +13,7 @@
   "featured": true,
   "order": 1,
   "links": {},
-  "linksNote": "TODO(shahed): repo/demo link, or keep as private repository",
+  "linksNote": "Private repository",
   "problem": [
     "Museum apps and AI art tools tend to fall into two disappointing camps: static info cards that dump a Wikipedia-style paragraph on you and stop there, or generic chatbots that \"know about art\" in the abstract but can't tell you anything specific about the actual painting in front of you.",
     "Neither format rewards curiosity — you can't ask a follow-up, you can't test what you learned, and there's no reason to come back to it later.",
