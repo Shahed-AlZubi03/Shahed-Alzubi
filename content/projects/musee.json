@@ -2,8 +2,14 @@
   "title": "Musée",
   "summary": "Point a camera at a painting and get a guide that actually knows that piece — grounded in curator notes, and willing to keep talking for as long as you're curious.",
   "role": "Solo build · End-to-end",
-  "timeframe": "TODO(shahed): timeframe",
-  "tags": ["RAG", "GPT-4o Vision", "Node.js", "Express", "MongoDB"],
+  "timeframe": "May 2026",
+  "tags": [
+    "RAG",
+    "GPT-4o Vision",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
   "featured": true,
   "order": 1,
   "links": {},
@@ -54,31 +60,57 @@
   "stack": [
     {
       "group": "Backend",
-      "items": ["Node.js 22", "Express 5"]
+      "items": [
+        "Node.js 22",
+        "Express 5"
+      ]
     },
     {
       "group": "Database",
-      "items": ["MongoDB Atlas", "Mongoose 9"]
+      "items": [
+        "MongoDB Atlas",
+        "Mongoose 9"
+      ]
     },
     {
       "group": "AI",
-      "items": ["OpenAI GPT-4o Vision", "GPT-4o Chat Completions"]
+      "items": [
+        "OpenAI GPT-4o Vision",
+        "GPT-4o Chat Completions"
+      ]
     },
     {
       "group": "Auth & Security",
-      "items": ["JWT", "bcryptjs", "Helmet", "express-rate-limit", "express-validator"]
+      "items": [
+        "JWT",
+        "bcryptjs",
+        "Helmet",
+        "express-rate-limit",
+        "express-validator"
+      ]
     },
     {
       "group": "File Handling",
-      "items": ["Multer (magic-byte validation)"]
+      "items": [
+        "Multer (magic-byte validation)"
+      ]
     },
     {
       "group": "Frontend",
-      "items": ["HTML", "CSS", "Vanilla JS", "Canvas API"]
+      "items": [
+        "HTML",
+        "CSS",
+        "Vanilla JS",
+        "Canvas API"
+      ]
     },
     {
       "group": "Infrastructure",
-      "items": ["Docker", "Docker Compose", "dotenv"]
+      "items": [
+        "Docker",
+        "Docker Compose",
+        "dotenv"
+      ]
     }
   ],
   "outcome": [
