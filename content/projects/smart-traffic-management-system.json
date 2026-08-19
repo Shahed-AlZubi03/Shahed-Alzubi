@@ -1,0 +1,66 @@
+{
+  "title": "Smart Traffic Management System",
+  "summary": "A multi-modal system that fuses two YOLO models with acoustic siren detection, so emergency vehicles get prioritised before they are even visually confirmed.",
+  "role": "Graduation project · All phases",
+  "timeframe": "Oct 2024 – May 2025",
+  "tags": [
+    "Computer Vision",
+    "YOLO",
+    "YAMNet",
+    "Deep Learning",
+    "OpenCV"
+  ],
+  "featured": true,
+  "order": 3,
+  "links": {},
+  "linksNote": "Private repository",
+  "problem": [
+    "Urban traffic systems react too slowly to real-world conditions — congestion builds, emergency vehicles get delayed, and traffic lights don't adapt to what's actually happening on the road.",
+    "The goal was to build a system that sees and reacts to real conditions in real time."
+  ],
+  "approach": [
+    {
+      "heading": "Three specialised models",
+      "body": [
+        "Designed a computer vision-driven traffic management system combining three specialized models: a primary YOLO model for vehicle detection and classification (cars, trucks, motorcycles, buses, ambulances), a secondary YOLO model dedicated to traffic light state recognition, and a YAMNet-based audio classification model to detect emergency vehicle sirens acoustically."
+      ]
+    },
+    {
+      "heading": "Hearing before seeing",
+      "body": [
+        "The acoustic model catches emergency vehicles even before they're visually confirmed. Combining visual and audio signals let the system prioritize emergency response scenarios faster than a vision-only approach could."
+      ]
+    }
+  ],
+  "contribution": [
+    "Designed and built the system end-to-end as a graduation project — from selecting and training the YOLO models for vehicle and signal detection, to integrating the YAMNet audio pipeline, to architecting how the multiple model outputs combine into a single real-time decision system."
+  ],
+  "stack": [
+    {
+      "group": "Computer Vision",
+      "items": [
+        "YOLO",
+        "OpenCV"
+      ]
+    },
+    {
+      "group": "Audio",
+      "items": [
+        "YAMNet"
+      ]
+    },
+    {
+      "group": "Core",
+      "items": [
+        "Python",
+        "Deep Learning"
+      ]
+    }
+  ],
+  "outcome": [
+    "Built a functioning multi-modal AI system (vision + audio) for real-time traffic response — including emergency vehicle prioritization, a scenario with direct public safety impact."
+  ],
+  "learnings": [
+    "This project was where I first worked with combining multiple model types into one coordinated pipeline, a pattern that shows up again in my later multi-agent work."
+  ]
+}

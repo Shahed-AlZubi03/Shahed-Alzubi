@@ -1,0 +1,81 @@
+{
+  "title": "Jordan National Policy Intelligence Platform",
+  "summary": "A production-grade multi-agent system for querying Arabic legal and policy documents in natural language, where every answer carries citations and a confidence score.",
+  "role": "Pipeline contributor · Frontend owner",
+  "timeframe": "Apr – May 2026",
+  "tags": [
+    "Multi-Agent",
+    "LLMs",
+    "FastAPI",
+    "React",
+    "Docker"
+  ],
+  "featured": true,
+  "order": 2,
+  "links": {},
+  "linksNote": "Private repository",
+  "problem": [
+    "Jordanian government bodies needed a way to search and query large volumes of Arabic legal and policy documents using natural language — instead of manual document review, users needed grounded, citable answers they could trust for government-level decision-making."
+  ],
+  "approach": [
+    {
+      "heading": "Multi-agent architecture",
+      "body": [
+        "Built as a production-grade multi-agent AI system with an enterprise-style microservices architecture — 5 services separating concerns across knowledge management, governance, workflow orchestration, agent services, and frontend integration.",
+        "Each agent handles a distinct part of the query pipeline."
+      ]
+    },
+    {
+      "heading": "Grounding and traceability",
+      "body": [
+        "Every AI response is grounded with citations and confidence scoring, so answers are traceable back to source documents rather than presented as unverified generation."
+      ]
+    },
+    {
+      "heading": "Built for production",
+      "body": [
+        "The system was designed with scalability and production deployment in mind from the start, not just as a prototype."
+      ]
+    }
+  ],
+  "contribution": [
+    "Contributed to the platform's pipeline to make it production-ready for government-scale use.",
+    "Independently developed and integrated the React-based frontend — the primary interface through which users interact with the multi-agent system and view grounded, cited responses."
+  ],
+  "stack": [
+    {
+      "group": "Backend",
+      "items": [
+        "Python",
+        "FastAPI",
+        "MongoDB"
+      ]
+    },
+    {
+      "group": "AI / ML",
+      "items": [
+        "Multi-Agent Systems",
+        "LLMs"
+      ]
+    },
+    {
+      "group": "Frontend",
+      "items": [
+        "React"
+      ]
+    },
+    {
+      "group": "Infrastructure",
+      "items": [
+        "Microservices Architecture",
+        "Docker"
+      ]
+    }
+  ],
+  "outcome": [
+    "Delivered a working, cited-response system for querying Arabic legal and policy documents — a domain where accuracy and traceability matter more than raw generation speed."
+  ],
+  "learnings": [
+    "Working across 5 microservices reinforced how to design AI systems where trust (citations, confidence scores) is a first-class architectural requirement, not an afterthought — a principle I now carry into every AI product I build."
+  ]
+}

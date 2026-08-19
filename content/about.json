@@ -1,0 +1,7 @@
+{
+  "bio": [
+    "I'm an AI Engineer and Data Science graduate specializing in LLM applications, multi-agent systems, and backend development. My work sits at the intersection of AI and practical engineering — I don't just prototype with models, I build the full systems around them: APIs, data pipelines, and interfaces that make AI actually usable.",
+    "I've built intelligent tools like Musée, a vision-to-RAG museum guide that identifies a painting from a photo and grounds an ongoing conversation about it in curated curator notes. My background also spans computer vision and multi-agent architectures, including a real-time traffic management system and a multi-agent policy platform for government use.",
+    "I'm currently sharpening my expertise through the 9XAI fellowship, working on production-grade AI systems in real-world environments. I'm now taking on freelance and collaborative work — particularly projects where AI needs to be integrated into a real product, not just demoed."
+  ]
+}

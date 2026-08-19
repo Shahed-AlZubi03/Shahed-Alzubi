@@ -1,0 +1,57 @@
+[
+  {
+    "group": "Frontend",
+    "items": ["React", "JavaScript"]
+  },
+  {
+    "group": "Backend",
+    "items": [
+      "Node.js",
+      "Express.js",
+      "FastAPI",
+      "RESTful APIs",
+      "Microservices Architecture",
+      "Authentication",
+      "API Integration"
+    ]
+  },
+  {
+    "group": "AI / ML",
+    "items": [
+      "Python",
+      "Machine Learning",
+      "Deep Learning",
+      "NLP",
+      "LLMs",
+      "RAG (Retrieval-Augmented Generation)",
+      "Multi-Agent Systems",
+      "Computer Vision (YOLO)",
+      "Audio Classification (YAMNet)",
+      "Time-Series Forecasting",
+      "Feature Engineering",
+      "Model Evaluation",
+      "Model Deployment",
+      "SentenceTransformers",
+      "FAISS",
+      "Google Gemini API",
+      "scikit-learn",
+      "pandas",
+      "NumPy",
+      "OpenCV"
+    ]
+  },
+  {
+    "group": "Tools & Workflow",
+    "items": [
+      "Git/GitHub",
+      "Docker",
+      "MongoDB",
+      "SQL Databases",
+      "Linux",
+      "Postman",
+      "Jupyter Notebook",
+      "VS Code",
+      "Data Modeling"
+    ]
+  }
+]

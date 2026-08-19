@@ -1,0 +1,95 @@
+{
+  "title": "Musée",
+  "summary": "Point a camera at a painting and get a guide that actually knows that piece — grounded in curator notes, and willing to keep talking for as long as you're curious.",
+  "role": "Solo build · End-to-end",
+  "timeframe": "TODO(shahed): timeframe",
+  "tags": ["RAG", "GPT-4o Vision", "Node.js", "Express", "MongoDB"],
+  "featured": true,
+  "order": 1,
+  "links": {},
+  "linksNote": "TODO(shahed): repo/demo link, or keep as private repository",
+  "problem": [
+    "Museum apps and AI art tools tend to fall into two disappointing camps: static info cards that dump a Wikipedia-style paragraph on you and stop there, or generic chatbots that \"know about art\" in the abstract but can't tell you anything specific about the actual painting in front of you.",
+    "Neither format rewards curiosity — you can't ask a follow-up, you can't test what you learned, and there's no reason to come back to it later.",
+    "Musée was built to close that gap: point a camera at a painting and get a guide that actually knows that piece, will keep talking about it as long as you're interested, and gives you a reason to return to it — through quizzes, a saved gallery, and a record of what you've explored."
+  ],
+  "approach": [
+    {
+      "heading": "Identification as a starting point, not the product",
+      "body": [
+        "The core design decision was treating artwork identification as the start of an interaction rather than the whole product. That shaped everything downstream."
+      ]
+    },
+    {
+      "heading": "Vision → Retrieval → Chat pipeline",
+      "body": [
+        "An uploaded image goes to GPT-4o Vision for identification — title, artist, year, movement. That result is used to look up the artwork in MongoDB, pulling curator notes and fun facts.",
+        "Those notes are injected into the system prompt for the chat model — a RAG pattern that keeps responses grounded in curated, artwork-specific detail rather than the model's generic art-history knowledge."
+      ]
+    },
+    {
+      "heading": "Stateful sessions",
+      "body": [
+        "Each conversation persists its message history in MongoDB, so follow-up questions stay contextual instead of starting from scratch on every request.",
+        "This also became the backbone for the quiz feature — questions are generated from what the user actually discussed, not from a static question bank."
+      ]
+    },
+    {
+      "heading": "Data modeling for reuse",
+      "body": [
+        "Users, artworks, sessions, galleries, and quizzes are modeled as distinct, related collections, so the same artwork data can support the chat, the quiz generator, the gallery, and the shareable art card without duplication."
+      ]
+    },
+    {
+      "heading": "Security as a first-class concern",
+      "body": [
+        "JWT auth with bcrypt hashing, rate limiting scoped specifically to the expensive AI endpoints (/api/ask, /api/quiz/generate, and similar), and upload validation that checks a file's actual magic bytes rather than trusting the browser's declared MIME type."
+      ]
+    }
+  ],
+  "contribution": [
+    "I designed and built Musée end to end as a solo project — architecture, backend API, database schema, AI integration, and frontend.",
+    "That meant making (and living with) every tradeoff myself: how much conversation history to keep in context, how to structure the RAG injection so it stayed grounded without making responses feel like a recitation of notes, how to scope rate limits so the AI routes were protected without throttling normal use, and how to design the data models so gallery, quiz, and session features could all reference the same artwork records cleanly."
+  ],
+  "stack": [
+    {
+      "group": "Backend",
+      "items": ["Node.js 22", "Express 5"]
+    },
+    {
+      "group": "Database",
+      "items": ["MongoDB Atlas", "Mongoose 9"]
+    },
+    {
+      "group": "AI",
+      "items": ["OpenAI GPT-4o Vision", "GPT-4o Chat Completions"]
+    },
+    {
+      "group": "Auth & Security",
+      "items": ["JWT", "bcryptjs", "Helmet", "express-rate-limit", "express-validator"]
+    },
+    {
+      "group": "File Handling",
+      "items": ["Multer (magic-byte validation)"]
+    },
+    {
+      "group": "Frontend",
+      "items": ["HTML", "CSS", "Vanilla JS", "Canvas API"]
+    },
+    {
+      "group": "Infrastructure",
+      "items": ["Docker", "Docker Compose", "dotenv"]
+    }
+  ],
+  "outcome": [
+    "A working full-stack application covering the complete loop: upload → identify → converse → quiz → save → share.",
+    "Concretely, it includes 15 API endpoints spanning auth, chat, quizzes, gallery management, and card generation; a five-collection MongoDB schema modeling the relationships between users, artworks, sessions, galleries, and quizzes; three-tier adaptive quizzes generated from live conversation content; and a Canvas-based shareable art card exported as PNG.",
+    "The app also ships with production-oriented details often skipped in solo and portfolio projects — rate limiting scoped per route type, magic-byte file validation, and multilingual support with auto-detected language."
+  ],
+  "learnings": [
+    "RAG is as much about restraint as retrieval. The hardest part wasn't pulling curator notes into the prompt — it was making sure the model leaned on them without sounding like it was just reading them back verbatim.",
+    "Statefulness changes the design surface. Once conversations persisted, features I hadn't originally planned — quizzes built from actual dialogue, gallery notes — became natural extensions rather than bolted-on additions.",
+    "Security details are easy to skip solo, and that's exactly why they matter. Things like magic-byte validation on uploads or scoping rate limits to AI-cost routes specifically aren't glamorous, but they're the difference between a demo and something that could survive real traffic.",
+    "Semantic search taught me a lesson about scope. I generated embeddings for every artwork during seeding but didn't wire vector retrieval into the request path in this pass — a reminder that \"the data pipeline is ready\" and \"the feature is done\" are two different milestones, and it's fine to ship the former and roadmap the latter."
+  ]
+}
