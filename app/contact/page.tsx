@@ -27,7 +27,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="rounded-card border border-border bg-surface/40 p-6 md:p-8">
+        <div className="rounded-card border border-border bg-surface/90 p-6 md:p-8">
           <ContactLinks />
         </div>
       </div>

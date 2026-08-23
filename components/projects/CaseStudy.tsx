@@ -37,14 +37,14 @@ export function CaseStudy({
 
         <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4 border-t border-border pt-5">
           <div>
-            <dt className="font-mono text-xs uppercase tracking-widest text-fg-subtle">
+            <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted">
               Role
             </dt>
             <dd className="mt-1.5 text-sm text-fg">{project.role}</dd>
           </div>
           {project.timeframe ? (
             <div>
-              <dt className="font-mono text-xs uppercase tracking-widest text-fg-subtle">
+              <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted">
                 When
               </dt>
               <dd className="mt-1.5 text-sm text-fg">{project.timeframe}</dd>
@@ -52,7 +52,7 @@ export function CaseStudy({
           ) : null}
           {links.length > 0 || project.linksNote ? (
             <div>
-              <dt className="font-mono text-xs uppercase tracking-widest text-fg-subtle">
+              <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted">
                 Links
               </dt>
               {links.length > 0 ? (
@@ -111,7 +111,7 @@ export function CaseStudy({
                   key={group.group}
                   className="sm:grid sm:grid-cols-[9rem_1fr] sm:gap-6"
                 >
-                  <dt className="font-mono text-xs uppercase tracking-widest text-fg-subtle sm:pt-1.5">
+                  <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted sm:pt-1.5">
                     {group.group}
                   </dt>
                   <dd className="mt-2 flex flex-wrap gap-2 sm:mt-0">
@@ -136,10 +136,10 @@ export function CaseStudy({
         {next ? (
           <Link
             href={`/projects/${next.slug}`}
-            className="group mt-16 flex items-center justify-between gap-6 rounded-card border border-border bg-surface/40 p-6 transition-colors hover:border-accent-line hover:bg-surface"
+            className="group mt-16 flex items-center justify-between gap-6 rounded-card border border-border bg-surface/90 p-6 transition-colors hover:border-accent-line hover:bg-surface"
           >
             <span>
-              <span className="font-mono text-xs uppercase tracking-widest text-fg-subtle">
+              <span className="font-mono text-xs uppercase tracking-widest text-fg-muted">
                 Next case study
               </span>
               <span className="mt-2 block font-display text-lg font-semibold text-fg transition-colors group-hover:text-accent">

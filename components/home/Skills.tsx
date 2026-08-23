@@ -13,7 +13,7 @@ export function Skills({ groups }: { groups: SkillGroup[] }) {
           key={group.group}
           className="border-t border-border py-6 sm:grid sm:grid-cols-[12rem_1fr] sm:gap-8"
         >
-          <dt className="font-mono text-xs uppercase tracking-widest text-fg-subtle sm:pt-1.5">
+          <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted sm:pt-1.5">
             {group.group}
           </dt>
           <dd className="mt-3 flex flex-wrap gap-2 sm:mt-0">

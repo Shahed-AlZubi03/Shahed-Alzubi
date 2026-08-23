@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { GradientWave } from "@/components/ui/gradient-wave";
 import { site } from "@/lib/site";
 
 import "./globals.css";
@@ -82,6 +83,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-full flex-col">
+        {/* Ambient backdrop shared by every route. `fixed` keeps the canvas
+            viewport-sized however long a page grows and holds the wash still
+            while content scrolls over it. The opacity is deliberately low:
+            body copy has to stay at AA contrast on top of it everywhere. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 -z-10 opacity-[0.22]"
+        >
+          <GradientWave
+            softness={1.4}
+            noiseFrequency={[0.00006, 0.00035]}
+            deform={{ incline: 0.35, noiseAmp: 300, noiseFlow: 3.5 }}
+          />
+        </div>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:text-accent-contrast"

@@ -1,5 +1,7 @@
 /** Single source of truth for identity, nav, and outbound links. */
 
+import type { PlatformId } from "@/components/ui/icons";
+
 /** Split so the hero can accent the second half; `site.role` recomposes them. */
 const roleLead = "Full-Stack Developer specializing in";
 const roleHighlight = "AI-powered applications";
@@ -33,6 +35,9 @@ export const navItems: readonly NavItem[] = [
 ] as const;
 
 export type SocialLink = {
+  /** Selects the inline mark in `platformIcons`; typed so a social can never
+      name an icon that doesn't exist. */
+  id: PlatformId;
   label: string;
   href: string;
   /** Shown next to the link in the contact section. */
@@ -41,11 +46,13 @@ export type SocialLink = {
 
 export const socials: readonly SocialLink[] = [
   {
+    id: "github",
     label: "GitHub",
     href: "https://github.com/Shahed-AlZubi03",
     handle: "Shahed-AlZubi03",
   },
   {
+    id: "linkedin",
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/shahedalzubi/",
     handle: "in/shahedalzubi",

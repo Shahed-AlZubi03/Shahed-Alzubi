@@ -7,65 +7,65 @@
    utilities that read the var at runtime (so themes can swap).
    ============================================================ */
 
+/* Palette: sage green · warm beige · terracotta.
+   Terracotta is the accent (highest chroma), sage the secondary /
+   decorative note, beige the text in dark and the ground in light. */
+
 :root {
-  /* Surfaces — near-black navy, not pure black */
-  --bg: #06090f;
-  --bg-subtle: #0a0f1a;
-  --surface: #0e1523;
-  --surface-hover: #141d2f;
+  /* Surfaces — warm near-black with an olive cast, not pure black */
+  --bg: #101210;
+  --bg-subtle: #161a15;
+  --surface: #1b201a;
+  --surface-hover: #232a20;
 
   /* Lines */
-  --border: #1c2739;
-  --border-strong: #2b3a52;
+  --border: #2c3329;
+  --border-strong: #414c3c;
 
-  /* Text */
-  --fg: #e9effa;
-  --fg-muted: #94a6c4;
-  --fg-subtle: #70819c;
+  /* Text — warm beige rather than a cool grey */
+  --fg: #ede4d6;
+  --fg-muted: #a9af9d;
+  --fg-subtle: #838b78;
 
-  /* Electric blue accent (nods to syntheticmind__) */
-  --accent: #4d8dff;
-  --accent-hover: #6ba1ff;
-  --accent-contrast: #04070d;
-  --accent-soft: rgb(77 141 255 / 0.12);
-  --accent-line: rgb(77 141 255 / 0.32);
+  /* Terracotta accent */
+  --accent: #ce7c55;
+  --accent-hover: #de9070;
+  --accent-contrast: #1a0f09;
+  --accent-soft: rgb(206 124 85 / 0.14);
+  --accent-line: rgb(206 124 85 / 0.34);
 
-  /* Reserved for sparing highlight use (glows, gradients) */
-  --glow: #5eeaff;
+  /* Sage — reserved for sparing highlight use (glows, gradients) */
+  --glow: #9caf94;
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Decorative */
-  --grid-line: rgb(255 255 255 / 0.035);
-  --hero-glow: rgb(77 141 255 / 0.22);
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
 }
 
 [data-theme="light"] {
-  --bg: #ffffff;
-  --bg-subtle: #f5f7fb;
-  --surface: #ffffff;
-  --surface-hover: #f1f5fb;
+  --bg: #fbf6ee;
+  --bg-subtle: #f3eadc;
+  --surface: #fffdf9;
+  --surface-hover: #f5ecde;
 
-  --border: #e2e8f2;
-  --border-strong: #cbd5e5;
+  --border: #e2d6c2;
+  --border-strong: #cbbca3;
 
-  --fg: #0a1220;
-  --fg-muted: #4a5a73;
-  --fg-subtle: #60718b;
+  --fg: #241c14;
+  --fg-muted: #5c5344;
+  --fg-subtle: #7a7060;
 
-  --accent: #1f5fe0;
-  --accent-hover: #1a4fbe;
+  --accent: #a9542f;
+  --accent-hover: #8e4526;
   --accent-contrast: #ffffff;
-  --accent-soft: rgb(31 95 224 / 0.09);
-  --accent-line: rgb(31 95 224 / 0.24);
+  --accent-soft: rgb(169 84 47 / 0.10);
+  --accent-line: rgb(169 84 47 / 0.26);
 
-  --glow: #0284a8;
+  --glow: #6f8465;
 
-  --grid-line: rgb(10 18 32 / 0.045);
-  --hero-glow: rgb(31 95 224 / 0.10);
-  --shadow-card: 0 1px 2px rgb(10 18 32 / 0.05), 0 8px 24px -14px rgb(10 18 32 / 0.18);
+  --shadow-card: 0 1px 2px rgb(36 28 20 / 0.05), 0 8px 24px -14px rgb(36 28 20 / 0.18);
 }
 
 @theme inline {
@@ -185,14 +185,6 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
-}
-
-/* Faint blueprint grid — used behind the hero, never full-page */
-@utility bg-grid {
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
 }
 
 @utility shadow-card {

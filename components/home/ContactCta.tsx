@@ -3,7 +3,7 @@ import { contactEmail } from "@/lib/site";
 
 export function ContactCta() {
   return (
-    <div className="rounded-card border border-border bg-surface/40 p-8 md:p-12">
+    <div className="rounded-card border border-border bg-surface/90 p-8 md:p-12">
       <h2 className="max-w-2xl text-balance text-h2 text-fg">
         Have a product that needs AI built into it properly?
       </h2>

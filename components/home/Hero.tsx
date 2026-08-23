@@ -5,33 +5,21 @@ import { site } from "@/lib/site";
 /**
  * Left-aligned and asymmetric on purpose — a centred hero is the templated
  * default. Motion is a single staggered fade-up on load, nothing on scroll.
+ *
+ * The ambient mesh gradient behind this lives at the page level (app/page.tsx)
+ * so it spans the whole home page rather than stopping at the hero's edge.
  */
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden">
-      {/* Blueprint grid, faded out before it reaches the edges. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-grid [mask-image:radial-gradient(ellipse_75%_65%_at_15%_0%,black,transparent)]"
-      />
-      {/* One soft accent bloom behind the headline. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-48 -top-56 -z-10 size-[40rem] rounded-full blur-[130px]"
-        style={{
-          background:
-            "radial-gradient(circle, var(--hero-glow), transparent 70%)",
-        }}
-      />
-
+    <section>
       <Container className="pb-section pt-16 md:pt-24">
         <p
           className="inline-flex animate-rise items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1.5 font-mono text-xs text-fg-muted"
           style={{ animationDelay: "0ms" }}
         >
           <span className="relative flex size-1.5">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-75" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-glow opacity-75" />
+            <span className="relative inline-flex size-1.5 rounded-full bg-glow" />
           </span>
           Available for freelance work
         </p>

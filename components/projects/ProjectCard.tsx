@@ -19,7 +19,7 @@ export function ProjectCard({
     <article>
       <Link
         href={`/projects/${project.slug}`}
-        className="group block rounded-card border border-border bg-surface/40 p-6 transition-colors duration-300 hover:border-accent-line hover:bg-surface md:p-8"
+        className="group block rounded-card border border-border bg-surface/90 p-6 transition-colors duration-300 hover:border-accent-line hover:bg-surface md:p-8"
       >
         {/* Stacks on mobile — side by side the rule collapses and the role
             wraps against the index. */}
