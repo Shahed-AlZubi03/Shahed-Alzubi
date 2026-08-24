@@ -73,8 +73,15 @@ export const metadata: Metadata = {
 /**
  * Runs before paint so a stored light preference doesn't flash dark first.
  * Dark is the default, so there is nothing to do unless "light" is stored.
+ *
+ * It also stamps `data-js`, which is what lets CSS style for the with-script
+ * case only. `AnimatedText` needs its split letters hidden before the first
+ * paint — otherwise the heading paints in full and then blinks out as Motion
+ * resets it (measured at 371ms of visible text under a 6x CPU throttle) — but
+ * hiding them unconditionally would leave the text invisible whenever the JS
+ * does not arrive. Gating on this attribute gets both.
  */
-const themeScript = `try{if(localStorage.getItem("theme")==="light"){document.documentElement.dataset.theme="light"}}catch(e){}`;
+const themeScript = `try{document.documentElement.dataset.js="1";if(localStorage.getItem("theme")==="light"){document.documentElement.dataset.theme="light"}}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

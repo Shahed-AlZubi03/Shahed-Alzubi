@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* HeroUI v3 — structural table CSS only. Tokens it expects are bridged onto
+   ours in the HEROUI BRIDGE block at the end of this file. */
+@import "@heroui/styles/components/table.css" layer(components);
+
 /* ============================================================
    DESIGN TOKENS
    Dark is the default. Light is opt-in via [data-theme="light"].
@@ -191,4 +195,104 @@
 
 @utility shadow-card {
   box-shadow: var(--shadow-card);
+}
+
+/* ============================================================
+   HEROUI BRIDGE
+   HeroUI v3 is Tailwind-v4-native: its component CSS ships raw
+   `@apply` and is compiled in *our* Tailwind context. Convenient —
+   it means the table inherits our palette instead of shipping its
+   own — but only if the token names it reaches for exist here.
+
+   What we do NOT import is `@heroui/styles/css`. That entry point
+   pulls `@import "tailwindcss"` a second time plus HeroUI's default
+   theme, and that theme redeclares --color-surface, --color-surface-
+   hover, --color-border, --color-accent, --color-accent-hover and
+   --color-accent-soft on a bare `:root`. Six direct collisions with
+   the tokens above: every `bg-surface`, `border-border` and
+   `text-accent` on the site would silently repoint to HeroUI's
+   grey/blue. Its dark values also key off `.dark` / [data-theme=
+   "dark"], and dark here is the unqualified `:root` default — so the
+   site's normal state would get HeroUI's *light* values.
+
+   So: structural CSS only (imported at the top of this file), and
+   the aliases below. Every one resolves to a token declared above,
+   which is what keeps the table theme-aware for free.
+   ============================================================ */
+
+@theme inline {
+  /* Surfaces. HeroUI's `secondary` surface is its header/zebra tone. */
+  --color-surface-secondary: var(--bg-subtle);
+  --color-surface-tertiary: var(--surface);
+
+  /* Text */
+  --color-foreground: var(--fg);
+  --color-muted: var(--fg-muted);
+
+  /* Lines. HeroUI splits these three ways and applies them at /50
+     opacity; ours is one border token, already tuned for hairlines. */
+  --color-separator: var(--border);
+  --color-separator-secondary: var(--border);
+  --color-separator-tertiary: var(--border);
+
+  /* Row hover. `default` is HeroUI's neutral interactive fill. */
+  --color-default: var(--surface-hover);
+
+  /* Focus. Matches the global :focus-visible ring in @layer base. */
+  --color-focus: var(--accent);
+}
+
+:root {
+  /* Consumed as bare `var(--focus)` inside HeroUI's inset focus
+     shadows, so it needs a real value — not just the @theme alias. */
+  --focus: var(--accent);
+  --radius: 0.5rem;
+  --cursor-interactive: pointer;
+
+  /* Read by the `status-disabled` utility below. */
+  --disabled-opacity: 0.5;
+  --cursor-disabled: not-allowed;
+
+  /* Read by the `scrollbar` utility below. */
+  --scrollbar-width: thin;
+  --scrollbar-color: var(--border-strong) transparent;
+  --scrollbar-gutter: auto;
+}
+
+/* HeroUI's table CSS @applies exactly two of its own utilities. Declared
+   here rather than importing `@heroui/styles/utilities` — that file's other
+   utilities @apply ring-focus / outline-danger / ring-offset-background,
+   pulling in a further set of tokens this site has no use for. */
+@utility scrollbar {
+  scrollbar-width: var(--scrollbar-width);
+  scrollbar-color: var(--scrollbar-color);
+  scrollbar-gutter: var(--scrollbar-gutter);
+}
+
+@utility status-disabled {
+  opacity: var(--disabled-opacity);
+  cursor: var(--cursor-disabled);
+  pointer-events: none;
+}
+
+/* ============================================================
+   ANIMATED TEXT — pre-paint hidden state
+   Holds the split pieces of `components/ui/animated-text.tsx` at
+   their entrance offset from the very first paint, so the line
+   never paints in full and then reset once Motion hydrates.
+
+   Both conditions matter. `[data-js]` is stamped by the pre-paint
+   script in app/layout.tsx, so with no JS this never applies and
+   the text simply renders. `no-preference` means a reduced-motion
+   reader is never handed invisible text — and if a browser does
+   not support the query at all, it also fails open to visible.
+
+   Motion writes inline styles on hydration, which outrank this.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js] [data-animated-piece] {
+    opacity: 0;
+    transform: translateY(var(--animated-text-y, 10px));
+  }
 }
