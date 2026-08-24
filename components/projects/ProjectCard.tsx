@@ -4,30 +4,22 @@ import { Tag } from "@/components/ui/Tag";
 import type { Project } from "@/lib/projects";
 
 /**
- * Used two ways: full-width in the stacked list on /projects, and as a
- * fixed-width item in the homepage carousel (which passes its width through
- * `className`). The column layout below is what lets the same markup do both
- * — stacked there is no free space so `mt-auto` resolves to 0 and it reads as
- * a normal block, while in a row of flex items — which stretch to the tallest
- * card — it pins the tags and the CTA to the bottom so cards of unequal copy
- * length still line up. `h-full` on the link is what passes that stretched
- * height down; putting it on the <article> instead would give the item an
- * explicit height and opt it out of stretching in the first place.
+ * Full-width rather than a grid cell — with a small number of deep case
+ * studies, wide cards read as substantial where a sparse 2-up grid reads as
+ * unfinished.
  */
 export function ProjectCard({
   project,
   index,
-  className,
 }: {
   project: Project;
   index: number;
-  className?: string;
 }) {
   return (
-    <article className={className}>
+    <article>
       <Link
         href={`/projects/${project.slug}`}
-        className="group flex h-full flex-col rounded-card border border-border bg-surface/90 p-6 transition-colors duration-300 hover:border-accent-line hover:bg-surface md:p-8"
+        className="group block rounded-card border border-border bg-surface/90 p-6 transition-colors duration-300 hover:border-accent-line hover:bg-surface md:p-8"
       >
         {/* Stacks on mobile — side by side the rule collapses and the role
             wraps against the index. */}
@@ -52,7 +44,7 @@ export function ProjectCard({
           {project.summary}
         </p>
 
-        <ul className="mt-auto flex flex-wrap gap-2 pt-6">
+        <ul className="mt-6 flex flex-wrap gap-2">
           {project.tags.map((tag) => (
             <li key={tag}>
               <Tag>{tag}</Tag>
@@ -60,7 +52,7 @@ export function ProjectCard({
           ))}
         </ul>
 
-        <span className="mt-7 inline-flex items-center gap-2 self-start text-sm font-medium text-accent">
+        <span className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-accent">
           Read case study
           <svg
             viewBox="0 0 16 16"
