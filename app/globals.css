@@ -6,71 +6,53 @@
 
 /* ============================================================
    DESIGN TOKENS
-   Dark is the default. Light is opt-in via [data-theme="light"].
+   One theme: warm cream ground, plum accent. There is no dark
+   variant and no toggle — see the note on the indirection below.
+
    Raw values live here; @theme inline maps them to Tailwind
-   utilities that read the var at runtime (so themes can swap).
+   utilities that read the var at runtime. That indirection is
+   kept even with a single palette: it is what lets components
+   name colours semantically (`bg-bg`, `text-accent`) instead of
+   reaching for a hex, so a future palette swap stays a one-file
+   change.
    ============================================================ */
 
-/* Palette: sage green · warm beige · terracotta.
-   Terracotta is the accent (highest chroma), sage the secondary /
-   decorative note, beige the text in dark and the ground in light. */
+/* Palette: warm cream · plum · muted olive-brown text.
+   Plum is the accent (highest chroma) and also the heading colour;
+   cream is the ground, olive-brown the body copy. */
 
 :root {
-  /* Surfaces — warm near-black with an olive cast, not pure black */
-  --bg: #101210;
-  --bg-subtle: #161a15;
-  --surface: #1b201a;
-  --surface-hover: #232a20;
-
-  /* Lines */
-  --border: #2c3329;
-  --border-strong: #414c3c;
-
-  /* Text — warm beige rather than a cool grey */
-  --fg: #ede4d6;
-  --fg-muted: #a9af9d;
-  --fg-subtle: #838b78;
-
-  /* Terracotta accent. Tuned to clear AA as small text on top of the ambient
-     gradient in app/layout.tsx, not just as a button fill — the wash costs
-     roughly a full contrast point wherever accent-coloured text sits on it. */
-  --accent: #d48d6b;
-  --accent-hover: #e0a184;
-  --accent-contrast: #1a0f09;
-  --accent-soft: rgb(212 141 107 / 0.14);
-  --accent-line: rgb(212 141 107 / 0.34);
-
-  /* Sage — reserved for sparing highlight use (glows, gradients) */
-  --glow: #9caf94;
-
-  /* Motion */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-
-  /* Decorative */
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px -12px rgb(0 0 0 / 0.6);
-}
-
-[data-theme="light"] {
+  /* Surfaces */
   --bg: #fbf6ee;
   --bg-subtle: #f3eadc;
   --surface: #fffdf9;
   --surface-hover: #f5ecde;
 
+  /* Lines */
   --border: #e2d6c2;
   --border-strong: #cbbca3;
 
+  /* Text — plum headings over a muted olive-brown body */
   --fg: #702963;
   --fg-muted: #5c5344;
   --fg-subtle: #7a7060;
 
+  /* Plum accent. Tuned to clear AA as small text on top of the ambient
+     gradient in app/layout.tsx, not just as a button fill — the wash costs
+     roughly a full contrast point wherever accent-coloured text sits on it. */
   --accent: #6b496e;
   --accent-hover: #7d5980;
   --accent-contrast: #ffffff;
   --accent-soft: rgb(107 73 110 / 0.10);
   --accent-line: rgb(107 73 110 / 0.26);
 
+  /* Pale plum — reserved for sparing highlight use (glows, gradients) */
   --glow: #f3e5ed;
 
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Decorative */
   --shadow-card: 0 1px 2px rgb(36 28 20 / 0.05), 0 8px 24px -14px rgb(36 28 20 / 0.18);
 }
 
@@ -140,9 +122,6 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
-  }
-  [data-theme="light"] {
     color-scheme: light;
   }
 
@@ -211,13 +190,11 @@
    --color-accent-soft on a bare `:root`. Six direct collisions with
    the tokens above: every `bg-surface`, `border-border` and
    `text-accent` on the site would silently repoint to HeroUI's
-   grey/blue. Its dark values also key off `.dark` / [data-theme=
-   "dark"], and dark here is the unqualified `:root` default — so the
-   site's normal state would get HeroUI's *light* values.
+   grey/blue.
 
    So: structural CSS only (imported at the top of this file), and
    the aliases below. Every one resolves to a token declared above,
-   which is what keeps the table theme-aware for free.
+   which is what keeps the table on our palette for free.
    ============================================================ */
 
 @theme inline {

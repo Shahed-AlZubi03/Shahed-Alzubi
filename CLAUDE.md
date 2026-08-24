@@ -34,11 +34,11 @@ Professional, modern, dark-first, minimal. Should read as dev-built, not as a
 Wix/Squarespace template. Avoid stock shadcn layouts used without
 customization.
 
-Palette nods to my content brand (`syntheticmind__`): near-black navy base with
-an electric-blue accent. Nod, not carbon copy.
+Palette: warm cream ground with a plum accent.
 
-- Dark is the default. Light is opt-in via `[data-theme="light"]` on `<html>`,
-  set by a pre-paint script in `app/layout.tsx` and toggled by `ThemeToggle`.
+- **Single theme.** There is no dark mode and no theme toggle — one palette on
+  `:root` in `app/globals.css`. Keep using the semantic utilities anyway; they
+  are what makes a palette change a one-file edit.
 - Type: Space Grotesk (headings, `font-display`), Inter (body, `font-sans`),
   JetBrains Mono (tags, labels, code, `font-mono`).
 - Motion: fade/slide-in on load only. No gimmicks. Respect
@@ -49,7 +49,7 @@ an electric-blue accent. Nod, not carbon copy.
 ```
 app/          routes: / , /projects , /projects/[slug] , /about , /contact
 components/
-  layout/     Navbar, Footer, ThemeToggle
+  layout/     Navbar, Footer
   ui/         Container, Section, ScaffoldNote
 content/
   projects/   one JSON per case study; filename === slug
@@ -63,13 +63,13 @@ lib/
 
 - Semantic color utilities only — `bg-bg`, `text-fg-muted`, `border-border`,
   `text-accent`. Never hardcode a hex or use raw Tailwind palette colors
-  (`slate-800`, `blue-500`), or light mode will break.
+  (`slate-800`, `blue-500`); the tokens are the only place colour is decided.
 - Layout width: `<Container>` (`max-w-content`) for page shells,
   `width="prose"` (`max-w-reading`) for long-form copy.
 - Vertical rhythm: `<Section>` — `py-section`, or `size="lg"` for
   `py-section-lg`.
 - Server Components by default. `"use client"` only where there's real
-  interactivity (Navbar menu, ThemeToggle).
+  interactivity (Navbar menu).
 - Case-study copy is edited in `content/projects/*.json`, never in components.
 
 ## Working agreement

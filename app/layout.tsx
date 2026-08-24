@@ -71,17 +71,18 @@ export const metadata: Metadata = {
 };
 
 /**
- * Runs before paint so a stored light preference doesn't flash dark first.
- * Dark is the default, so there is nothing to do unless "light" is stored.
+ * Stamps `data-js` before paint, which is what lets CSS style for the
+ * with-script case only. `AnimatedText` needs its split letters hidden before
+ * the first paint — otherwise the heading paints in full and then blinks out
+ * as Motion resets it (measured at 371ms of visible text under a 6x CPU
+ * throttle) — but hiding them unconditionally would leave the text invisible
+ * whenever the JS does not arrive. Gating on this attribute gets both.
+ * `MagicText` leans on the same flag for its dim state.
  *
- * It also stamps `data-js`, which is what lets CSS style for the with-script
- * case only. `AnimatedText` needs its split letters hidden before the first
- * paint — otherwise the heading paints in full and then blinks out as Motion
- * resets it (measured at 371ms of visible text under a 6x CPU throttle) — but
- * hiding them unconditionally would leave the text invisible whenever the JS
- * does not arrive. Gating on this attribute gets both.
+ * It used to apply a stored theme too. The site is single-theme now, so there
+ * is nothing to restore and no flash to head off.
  */
-const themeScript = `try{document.documentElement.dataset.js="1";if(localStorage.getItem("theme")==="light"){document.documentElement.dataset.theme="light"}}catch(e){}`;
+const bootScript = `try{document.documentElement.dataset.js="1"}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -92,7 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body className="flex min-h-full flex-col">
         {/* Ambient backdrop shared by every route. `fixed` keeps the canvas

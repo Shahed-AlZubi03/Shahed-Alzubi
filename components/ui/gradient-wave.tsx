@@ -751,8 +751,9 @@ export interface GradientWaveProps {
 }
 
 /**
- * Reads the palette off the live CSS custom properties so the gradient tracks
- * the light/dark toggle instead of pinning a hex that only works in one theme.
+ * Reads the palette off the live CSS custom properties rather than pinning
+ * hexes here, so a change in globals.css carries into the wash. The fallbacks
+ * mirror the tokens and only apply if the stylesheet has not landed.
  */
 function readThemeColors(): string[] {
   const styles = getComputedStyle(document.documentElement);
@@ -760,10 +761,10 @@ function readThemeColors(): string[] {
     styles.getPropertyValue(name).trim() || fallback;
 
   return [
-    token("--bg", "#101210"),
-    token("--accent", "#ce7c55"),
-    token("--glow", "#9caf94"),
-    token("--surface", "#1b201a"),
+    token("--bg", "#fbf6ee"),
+    token("--accent", "#6b496e"),
+    token("--glow", "#f3e5ed"),
+    token("--surface", "#fffdf9"),
   ];
 }
 

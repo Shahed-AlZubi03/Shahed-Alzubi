@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { clsx } from "@/lib/clsx";
 import { navItems, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { TubelightNav } from "@/components/ui/tubelight-nav";
 
 export function Navbar() {
@@ -44,7 +43,7 @@ export function Navbar() {
           : "border-transparent bg-transparent",
       )}
     >
-      <Container className="flex h-16 items-center justify-between gap-4">
+      <Container className="relative flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
           className="font-display text-[0.95rem] font-semibold tracking-tight text-fg"
@@ -53,40 +52,44 @@ export function Navbar() {
           <span className="text-accent">.</span>
         </Link>
 
-        <nav aria-label="Primary" className="hidden md:block">
+        {/* Absolutely centred rather than left to `justify-between`: the pill
+            used to sit near the middle only because the wordmark and the
+            theme toggle happened to be similar widths, and the toggle is
+            gone. */}
+        <nav
+          aria-label="Primary"
+          className="absolute left-1/2 hidden -translate-x-1/2 md:block"
+        >
           <TubelightNav
             items={navItems}
             activeHref={navItems.find((item) => isActive(pathname, item.href))?.href}
           />
         </nav>
 
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            aria-expanded={open}
-            aria-controls="mobile-nav"
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="grid size-9 place-items-center rounded-lg border border-border text-fg-muted transition-colors hover:border-border-strong hover:text-fg md:hidden"
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="grid size-9 place-items-center rounded-lg border border-border text-fg-muted transition-colors hover:border-border-strong hover:text-fg md:hidden"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            className="size-4"
+            aria-hidden="true"
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              className="size-4"
-              aria-hidden="true"
-            >
-              {open ? (
-                <path d="M6 6l12 12M18 6L6 18" />
-              ) : (
-                <path d="M4 7h16M4 12h16M4 17h16" />
-              )}
-            </svg>
-          </button>
-        </div>
+            {open ? (
+              <path d="M6 6l12 12M18 6L6 18" />
+            ) : (
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            )}
+          </svg>
+        </button>
       </Container>
 
       {open ? (
