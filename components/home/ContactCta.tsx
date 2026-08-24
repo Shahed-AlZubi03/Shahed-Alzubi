@@ -1,3 +1,4 @@
+import { LiquidMetalButton } from "@/components/ui/liquid-metal-button";
 import { ButtonLink } from "@/components/ui/Button";
 import { contactEmail } from "@/lib/site";
 
@@ -12,9 +13,9 @@ export function ContactCta() {
         one part of a system that has to hold up in production.
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <ButtonLink href={`mailto:${contactEmail}`} external>
+        <LiquidMetalButton href={`mailto:${contactEmail}`} external>
           Email me
-        </ButtonLink>
+        </LiquidMetalButton>
         <ButtonLink href="/contact" variant="secondary">
           All contact details
         </ButtonLink>

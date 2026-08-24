@@ -1,0 +1,168 @@
+{
+  "title": "Meeting Intelligence Engine",
+  "summary": "An async ML pipeline that turns meeting recordings into speaker-attributed transcripts, decisions, and action items — with continuity across recurring meetings.",
+  "role": "Solo build · End-to-end",
+  "tags": [
+    "Celery",
+    "Whisper",
+    "FastAPI",
+    "WebSockets",
+    "PostgreSQL"
+  ],
+  "featured": true,
+  "order": 3,
+  "links": {},
+  "linksNote": "Private repository",
+  "problem": [
+    "Meetings are where commitments get made and then quietly lost. The decision someone made in week three gets re-litigated in week six; a blocker raised in three consecutive standups gets logged three times as three separate problems; the action item assigned to you exists only in someone's notebook.",
+    "Transcription tools solve the wrong half of this. They give you a wall of text per recording and treat every meeting as an isolated event, so the output still needs a human to read it, decide what mattered, and remember what it connects to.",
+    "There's a second problem underneath the product one, and it's the harder engineering constraint: the work itself is slow and unreliable. Transcription and diarization on a 60-minute recording take minutes, not milliseconds. Models load slowly and eat memory. LLM providers time out, rate-limit, and occasionally return JSON that doesn't match the schema they returned last time. Any design where a user uploads a file and waits on an HTTP response is broken before it ships — and any design where one flaky external call loses an hour of completed GPU work is worse.",
+    "So the real problem statement was: build a system where expensive, failure-prone work can fail partway through without losing progress, while the user watches it happen in real time."
+  ],
+  "approach": [
+    {
+      "heading": "Three process types, one split",
+      "body": [
+        "The system splits into three process types over shared PostgreSQL, Redis, and S3 — and the split is the whole design.",
+        "The API does no ML and never touches audio. Uploads go direct-to-S3 through pre-signed URLs, so the API never buffers a 500 MB file. faster-whisper and pyannote are lazy-imported inside worker stage functions, and their dependencies live in a separate requirements-ml.txt baked only into the worker image. The result is an API container that starts in seconds and stays small, and worker containers that scale independently of request traffic."
+      ]
+    },
+    {
+      "heading": "Staged, resumable pipeline",
+      "body": [
+        "Processing runs as eight stages — validate, normalize, transcribe, diarize, attribute, extract, persist, push — each owning a progress band, writing its own errors to a processing_jobs table, and re-raising for Celery retry.",
+        "A reprocess resumes from the last successful stage rather than starting over, and reuses persisted speaker attribution instead of re-running diarization. When an LLM call fails on a 90-minute recording, the transcription work survives."
+      ]
+    },
+    {
+      "heading": "Progress without stateful workers",
+      "body": [
+        "Progress reaches the browser without workers holding sockets. Workers publish frames to a Redis channel (meeting:{id}:progress); the API's WebSocket manager subscribes and relays.",
+        "Workers stay stateless and restartable, and the frontend gets sub-second stage transitions. This one indirection is what lets a worker be killed mid-pipeline without a user-visible connection dying with it."
+      ]
+    },
+    {
+      "heading": "Retries are not failures",
+      "body": [
+        "A non-final stage failure publishes a non-terminal frame carrying retry_attempt — the UI shows \"retrying,\" not \"failed.\" Only the final exhausted attempt notifies the user and marks the meeting failed.",
+        "Getting this distinction right in the client took more care than the server side: the progress socket has genuine races around seeding, superseding, terminal frames, and reconnects, and those paths carry the heaviest frontend test coverage in the project."
+      ]
+    },
+    {
+      "heading": "Continuity as enrichment, never a gate",
+      "body": [
+        "Meetings can be grouped into a thread — a recurring standup, a client account — and a second narrow LLM call links a new meeting's action items to the thread's still-open prior ones, so a recurring blocker resolves into a history instead of a duplicate.",
+        "Every failure mode of that call (provider error, timeout, schema drift, database) degrades to persisting exactly as a thread-less meeting would. A missing continuity link is a quality gap, not a processing failure. The self-referential foreign keys are ON DELETE SET NULL for the same reason: reprocessing an earlier meeting drops the link and keeps both rows rather than cascading a delete through a user's history."
+      ]
+    },
+    {
+      "heading": "Integrations behind one adapter",
+      "body": [
+        "Notion, Linear, and Slack each subclass a common IntegrationAdapter, so callers never branch on platform. OAuth tokens are AES-256-GCM encrypted at rest and decrypted only at push time.",
+        "Outside production the adapters run in stub mode so the full pipeline is exercisable offline; in production they fail closed rather than silently no-op."
+      ]
+    },
+    {
+      "heading": "Multi-tenancy at the query layer",
+      "body": [
+        "Every query on org-scoped data filters by the organization_id tied to the authenticated user — that's the primary IDOR defense, and integration tests assert it endpoint by endpoint rather than trusting the convention. The audit_logs table is append-only: no UPDATE, no DELETE."
+      ]
+    },
+    {
+      "heading": "The product around the pipeline",
+      "body": [
+        "Around the pipeline sit the things that make it a product rather than a demo: analytics, GIN-indexed full-text transcript search, a cross-meeting action-items dashboard, in-app and email notifications, and an admin console with role-based access (owner / admin / member)."
+      ]
+    }
+  ],
+  "contribution": [
+    "Sole engineer, end to end — spec, backend, ML pipeline, frontend, evaluation, and infrastructure.",
+    "Design — worked from a written SRS as the authoritative spec (schema, API contract, pipeline stages, naming conventions), and maintained a documented list of deliberate divergences where implementation had to depart from it, so drift stayed visible instead of accumulating silently.",
+    "Backend — FastAPI service, async SQLAlchemy models and Alembic migrations (every revision implements both upgrade() and downgrade()), JWT auth with RS256, RBAC, rate limiting, the WebSocket relay layer, and the provider-agnostic LLM abstraction.",
+    "ML pipeline — all eight Celery stages: audio validation and ffmpeg normalization, faster-whisper transcription with word-level timestamps, pyannote diarization, the overlap-matching algorithm that attributes speaker turns onto transcript segments, chunked LLM extraction for long meetings, and thread continuity resolution.",
+    "Frontend — React + TypeScript SPA: upload flow, live progress UI, transcript and intelligence views, threads, analytics with Recharts, settings and admin.",
+    "Evaluation — offline benchmark harness measuring transcription WER (jiwer), diarization DER, and action-item precision/recall/F1 with an LLM-as-judge component, run against annotated ground-truth fixtures.",
+    "Infrastructure and ops — Docker Compose stacks for dev and single-host production, a GitHub Actions CI chain (lint, typecheck, test, security scan, plus a separate frontend job), pre-commit hooks mirroring the CI gates exactly, Prometheus instrumentation and a Grafana dashboard, and reference ECS Fargate task definitions with a migration-before-rollout deploy workflow."
+  ],
+  "stack": [
+    {
+      "group": "Backend",
+      "items": [
+        "Python 3.11",
+        "FastAPI",
+        "Pydantic v2",
+        "SQLAlchemy 2.0 (async)",
+        "Alembic",
+        "Celery 5",
+        "Redis 7",
+        "PostgreSQL 16",
+        "PyJWT (RS256)",
+        "bcrypt",
+        "AES-256-GCM",
+        "structlog"
+      ]
+    },
+    {
+      "group": "AI / ML",
+      "items": [
+        "faster-whisper",
+        "pyannote.audio 3.1",
+        "OpenAI GPT-4o",
+        "Anthropic Claude (fallback)"
+      ]
+    },
+    {
+      "group": "Frontend",
+      "items": [
+        "React 18",
+        "TypeScript 5",
+        "Vite 7",
+        "Tailwind 3",
+        "TanStack Query 5",
+        "Zustand",
+        "React Router 6",
+        "Recharts"
+      ]
+    },
+    {
+      "group": "Infrastructure",
+      "items": [
+        "Docker Compose",
+        "S3 / MinIO",
+        "GitHub Actions",
+        "Prometheus",
+        "Grafana",
+        "AWS ECS Fargate",
+        "SES / Mailpit"
+      ]
+    },
+    {
+      "group": "Testing",
+      "items": [
+        "pytest",
+        "fakeredis",
+        "Celery eager mode",
+        "PostgreSQL in CI",
+        "Vitest",
+        "Testing Library"
+      ]
+    }
+  ],
+  "outcome": [
+    "A complete, running system rather than a prototype: upload a recording and it moves through all eight stages with live progress, then returns a speaker-attributed transcript, extracted decisions and action items, cross-meeting continuity links, and an optional push to Notion, Linear, or Slack.",
+    "The whole stack runs offline with make dev — Postgres, Redis, MinIO, Mailpit, API, workers, beat, and frontend. Without a Hugging Face token, diarization degrades to a single speaker; with EMAIL_BACKEND=smtp pointed at Mailpit, the verification, password-reset, and invitation flows complete for real with no AWS account. Graceful degradation was a design requirement, not an afterthought, and it's what makes the project reviewable by someone who isn't me.",
+    "Resumability is verified, not asserted — reprocessing picks up from the last successful stage and reuses persisted attribution, which is the difference between a 20-second retry and a 10-minute one.",
+    "Security posture is enforced in CI — pip-audit --strict and bandit on the backend, npm audit on the frontend, both gating merges. Two dependency swaps came directly out of this, described below.",
+    "An evaluation harness exists and produces numbers. Current fixture results are WER 0.11 and action-item F1 0.67 — but they come from three WER samples and two extraction samples, DER is skipped for lack of an ML environment, and extraction determinism is unverified. I report these as fixture smoke-test values, not as benchmarks, and the README says so in the same words. The deliverable I'd defend is the harness and the honesty about what it currently measures; the numbers need a real annotated set before anyone should cite them.",
+    "Deployment is a reference artifact, not a live cluster. The ECS task definitions carry <ACCOUNT_ID> and <REGION> placeholders, and the deploy workflow no-ops until AWS secrets exist. The migration-before-rollout ordering and the CI gating are real and reviewable; the running production environment is not something I'm claiming."
+  ],
+  "learnings": [
+    "\"Best-effort\" has to be designed, not declared. It's easy to write in a doc that thread continuity is optional. Making it true meant deciding, for every failure mode of that LLM call, exactly what row state results — and choosing ON DELETE SET NULL on the self-referential foreign keys so a reprocess drops a link instead of cascading a delete. Optional-ness lives in the schema and the error handling, not in the comment above the function.",
+    "Users experience retries as failures unless you tell them otherwise. Separating \"stage failed, attempt 2 of 3\" from \"pipeline failed\" changed the perceived reliability of the system more than any actual reliability work. It also forced clean thinking about which frames are terminal, which pushed complexity into the frontend socket handling — the seed, supersede, terminal, and reconnect races there are genuinely subtle, and are where I invested most of my frontend test budget.",
+    "Lazy imports are an architectural boundary. Keeping faster-whisper and pyannote imported only inside worker stage functions, with a separate ML requirements file and image, is a three-line discipline that produces a small fast API container and a clean scaling story. The temptation to import at module top for convenience would have quietly coupled the two forever.",
+    "Dependency scanning changes design decisions, not just versions. pip-audit is why the project runs PyJWT instead of python-jose — 3.3.0 carries unpatched advisories including one with no fix and drags in a vulnerable ecdsa transitive, and PyJWT rejects algorithm-confusion attacks by default. Vite got bumped from 5 to 7 for an esbuild advisory. Both are recorded as deliberate divergences from the spec rather than left to look like drift.",
+    "Observability has environment-specific failure modes that don't show up locally. Pipeline counters increment in the Celery process while the production API runs multiple gunicorn workers, so correct aggregation requires prometheus_client multiprocess mode and a METRICS_PORT exposition server on the worker — without them, worker-side series silently read as zero. Similarly, behind a proxy, an unset FORWARDED_ALLOW_IPS collapses every unauthenticated caller into one rate-limit bucket and turns the auth rate limiter into a self-DoS. Neither is reproducible in a single-container dev stack, which is exactly why both are documented.",
+    "A small evaluation set is a smoke test wearing a benchmark's clothes. Three samples produce a number, and that number is meaningless. The discipline I want to carry forward is labeling measured-versus-derived explicitly and writing the caveat directly next to the metric, where someone skimming will actually hit it — not in a footnote they'll skip.",
+    "Writing the spec down makes divergence a decision. Working against an SRS and keeping an explicit \"deliberate divergences\" section meant every departure had a stated reason. It's a cheap habit that keeps a solo project from turning into an undocumented pile of \"I probably had a reason for this.\""
+  ]
+}
