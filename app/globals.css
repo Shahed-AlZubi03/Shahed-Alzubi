@@ -27,12 +27,14 @@
   --fg-muted: #a9af9d;
   --fg-subtle: #838b78;
 
-  /* Terracotta accent */
-  --accent: #ce7c55;
-  --accent-hover: #de9070;
+  /* Terracotta accent. Tuned to clear AA as small text on top of the ambient
+     gradient in app/layout.tsx, not just as a button fill — the wash costs
+     roughly a full contrast point wherever accent-coloured text sits on it. */
+  --accent: #d48d6b;
+  --accent-hover: #e0a184;
   --accent-contrast: #1a0f09;
-  --accent-soft: rgb(206 124 85 / 0.14);
-  --accent-line: rgb(206 124 85 / 0.34);
+  --accent-soft: rgb(212 141 107 / 0.14);
+  --accent-line: rgb(212 141 107 / 0.34);
 
   /* Sage — reserved for sparing highlight use (glows, gradients) */
   --glow: #9caf94;
@@ -57,11 +59,11 @@
   --fg-muted: #5c5344;
   --fg-subtle: #7a7060;
 
-  --accent: #a9542f;
-  --accent-hover: #8e4526;
+  --accent: #8b4527;
+  --accent-hover: #6f3520;
   --accent-contrast: #ffffff;
-  --accent-soft: rgb(169 84 47 / 0.10);
-  --accent-line: rgb(169 84 47 / 0.26);
+  --accent-soft: rgb(139 69 39 / 0.10);
+  --accent-line: rgb(139 69 39 / 0.26);
 
   --glow: #6f8465;
 
