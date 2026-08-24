@@ -63,11 +63,11 @@
   --fg-muted: #5c5344;
   --fg-subtle: #7a7060;
 
-  --accent: #6b496e;
-  --accent-hover: #7d5980;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgb(107 73 110 / 0.10);
-  --accent-line: rgb(107 73 110 / 0.26);
+  --accent: #a9ba9d;
+  --accent-hover: #97a98a;
+  --accent-contrast: #1a2016;
+  --accent-soft: rgb(169 186 157 / 0.10);
+  --accent-line: rgb(169 186 157 / 0.26);
 
   --glow: #f3e5ed;
 
@@ -195,6 +195,35 @@
 
 @utility shadow-card {
   box-shadow: var(--shadow-card);
+}
+
+/* Homepage case-study rail. The two fade widths are driven from live scroll
+   position by `components/projects/ProjectCarousel.tsx` — 0px at whichever
+   end the row is already against, so the fade only ever appears where there
+   is actually more to see.
+
+   Masking the content rather than laying a gradient of --bg over it: the
+   ambient wave in the root layout sits behind the page, so a solid overlay
+   would print a visible seam against it. Scroll-behavior is deliberately not
+   set here — the arrow buttons animate through scrollBy(), and a CSS smooth
+   scroll would turn every frame of a drag into its own animation. */
+@utility carousel-rail {
+  --fade-start: 0px;
+  --fade-end: 0px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--fade-start),
+    #000 calc(100% - var(--fade-end)),
+    transparent 100%
+  );
+
+  /* The arrows and the fades carry the affordance; the bar itself only
+     crowds the cards. */
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* ============================================================
