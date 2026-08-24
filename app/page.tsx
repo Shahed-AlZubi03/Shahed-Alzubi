@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ContactCta } from "@/components/home/ContactCta";
 import { Hero } from "@/components/home/Hero";
 import { Skills } from "@/components/home/Skills";
-import { ProjectCard } from "@/components/projects/ProjectCard";
+import { ProjectCarousel } from "@/components/projects/ProjectCarousel";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getSkillGroups } from "@/lib/content";
@@ -18,16 +18,15 @@ export default function HomePage() {
       <Hero />
 
       <Section id="projects">
-        <SectionHeading eyebrow="Selected work" title="Case studies">
-          Systems taken past the prototype stage — how they were architected,
-          what I built, and what shipped.
-        </SectionHeading>
-
-        <div className="mt-12 flex flex-col gap-6">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.slug} project={project} index={index} />
-          ))}
-        </div>
+        <ProjectCarousel
+          projects={projects}
+          heading={
+            <SectionHeading eyebrow="Selected work" title="Case studies">
+              Systems taken past the prototype stage — how they were
+              architected, what I built, and what shipped.
+            </SectionHeading>
+          }
+        />
 
         <Link
           href="/projects"
