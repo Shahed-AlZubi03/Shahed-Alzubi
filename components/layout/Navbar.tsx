@@ -8,6 +8,7 @@ import { clsx } from "@/lib/clsx";
 import { navItems, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { TubelightNav } from "@/components/ui/tubelight-nav";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -53,31 +54,10 @@ export function Navbar() {
         </Link>
 
         <nav aria-label="Primary" className="hidden md:block">
-          <ul className="flex items-center gap-1">
-            {navItems.map((item) => {
-              const active = isActive(pathname, item.href);
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={active ? "page" : undefined}
-                    className={clsx(
-                      "relative rounded-md px-3 py-2 text-sm transition-colors",
-                      active ? "text-fg" : "text-fg-muted hover:text-fg",
-                    )}
-                  >
-                    {item.label}
-                    {active ? (
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-x-3 bottom-1 h-px bg-accent"
-                      />
-                    ) : null}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <TubelightNav
+            items={navItems}
+            activeHref={navItems.find((item) => isActive(pathname, item.href))?.href}
+          />
         </nav>
 
         <div className="flex items-center gap-2">
