@@ -52,11 +52,16 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: `${site.name} — ${site.role}`,
     description: site.tagline,
+    // A committed PNG rather than a generated `opengraph-image` route: static
+    // hosts serve the generated file without an extension, so crawlers get
+    // application/octet-stream and drop the preview.
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: site.role }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${site.name} — ${site.role}`,
     description: site.tagline,
+    images: ["/og.png"],
   },
   robots: {
     index: true,

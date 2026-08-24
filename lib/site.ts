@@ -16,7 +16,7 @@ export const site = {
   tagline:
     "I design and ship complete AI-powered products, handling everything from API design and data pipelines to integrating LLMs and multi-agent systems into production-ready products.",
   /** Set once the domain is live; used for canonical + OG URLs. */
-  url: "https://shahed.vercel.app", // TODO(shahed): final Vercel/custom domain
+  url: "https://shahed-alzubi03.github.io",
   locale: "en",
 } as const;
 

@@ -3,6 +3,10 @@ import type { MetadataRoute } from "next";
 import { getProjectSlugs } from "@/lib/projects";
 import { site } from "@/lib/site";
 
+
+/** `output: "export"` requires metadata routes to declare themselves
+    static — without this the build cannot collect the route. */
+export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes = ["", "/projects", "/about", "/contact"].map((route) => ({
     url: `${site.url}${route}`,

@@ -1,0 +1,53 @@
+# Builds the static export and publishes it to GitHub Pages.
+#
+# Requires one manual step, once: repo Settings -> Pages -> Source =
+# "GitHub Actions". Without that the deploy job fails with a 404.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-publish from the Actions tab without pushing a commit.
+  workflow_dispatch:
+
+# GITHUB_TOKEN needs these to hand the artifact to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; queue instead of cancelling a live one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `npm ci` over `npm install` — installs exactly the lockfile.
+      - run: npm ci
+
+      - run: npm run build
+
+      # `output: "export"` writes the site to ./out
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
