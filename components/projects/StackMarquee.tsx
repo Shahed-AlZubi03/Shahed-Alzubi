@@ -1,28 +1,24 @@
 "use client";
 
-import {
-  ScrollVelocityContainer,
-  ScrollVelocityRow,
-} from "@/components/ui/scroll-velocity-text";
+import { ScrollVelocityRow } from "@/components/ui/scroll-velocity-text";
 import { Tag } from "@/components/ui/Tag";
 import type { StackGroup } from "@/lib/projects";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 /**
- * The Tech Stack block of a case study: one scroll-reactive ticker per group,
- * label parked in the left column. Rows alternate direction, so the block
- * reads as a set of counter-running belts rather than one drifting line.
+ * The Tech Stack block of a case study: the whole stack on a single
+ * scroll-reactive line, group labels riding the belt ahead of their chips.
  *
  * `usePrefersReducedMotion` starts `true`, which is what makes the fallback
  * the *server* render too: no-JS readers and reduced-motion readers get the
- * plain wrapped chip list this replaced, never a strip of clipped, moving
- * text they cannot pause.
+ * plain labelled chip list below, never a strip of clipped, moving text they
+ * cannot pause. That fallback is also where the grouping is properly marked
+ * up — a `dl` cannot survive the copies the marquee interleaves, so the moving
+ * version is a flat line that still reads in order: label, then its items.
  *
- * Rows share one `ScrollVelocityContainer`, so the whole block costs one
- * scroll listener and one spring. `pixelsPerSecond` pins every row to the
- * same drift: the component's default speed is a share of the repeating
- * block, which would run the twelve-chip Backend row of a big stack about
- * four times faster than the four-chip AI row directly under it.
+ * `pixelsPerSecond` overrides the component's default speed, which is a share
+ * of the repeating block per second — that would drift a two-item stack and a
+ * forty-item one at wildly different rates.
  */
 export function StackMarquee({ groups }: { groups: StackGroup[] }) {
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -50,36 +46,33 @@ export function StackMarquee({ groups }: { groups: StackGroup[] }) {
   }
 
   return (
-    <ScrollVelocityContainer>
-      <dl className="flex flex-col gap-4">
-        {groups.map((group, index) => (
-          <div
-            key={group.group}
-            className="sm:grid sm:grid-cols-[9rem_minmax(0,1fr)] sm:items-center sm:gap-6"
-          >
-            <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted">
-              {group.group}
-            </dt>
-            <dd className="mt-2 min-w-0 sm:mt-0">
-              <ScrollVelocityRow
-                pixelsPerSecond={22}
-                direction={index % 2 === 0 ? 1 : -1}
-                style={FADE_EDGES}
-              >
-                {group.items.map((item) => (
-                  <span key={item} className="inline-flex items-center">
-                    <Tag className="mx-2">{item}</Tag>
-                    <span aria-hidden="true" className="text-accent/45">
-                      &middot;
-                    </span>
-                  </span>
-                ))}
-              </ScrollVelocityRow>
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </ScrollVelocityContainer>
+    <ScrollVelocityRow
+      pixelsPerSecond={26}
+      className="py-1"
+      style={FADE_EDGES}
+    >
+      {groups.map((group) => (
+        <span key={group.group} className="inline-flex items-center">
+          {/* The group label rides the belt instead of sitting in a fixed
+              column, which is what lets the whole stack be one line. It is
+              styled as a marker, not a chip, so a group still reads as a
+              group while it moves. */}
+          <span className="ml-7 mr-3 font-mono text-xs uppercase tracking-widest text-accent/80">
+            {group.group}
+          </span>
+          {group.items.map((item, index) => (
+            <span key={item} className="inline-flex items-center">
+              {index > 0 ? (
+                <span aria-hidden="true" className="mx-2 text-fg-subtle/50">
+                  &middot;
+                </span>
+              ) : null}
+              <Tag>{item}</Tag>
+            </span>
+          ))}
+        </span>
+      ))}
+    </ScrollVelocityRow>
   );
 }
 
