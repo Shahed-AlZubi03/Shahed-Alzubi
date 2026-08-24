@@ -296,3 +296,28 @@
     transform: translateY(var(--animated-text-y, 10px));
   }
 }
+
+/* ============================================================
+   MAGIC TEXT — pre-paint dim state
+   Holds the words of `components/ui/magic-text.tsx` at their
+   unread opacity from the first paint, so a case-study paragraph
+   never renders at full strength and then dims once Motion
+   hydrates and takes the scroll reveal over.
+
+   Same two conditions as ANIMATED TEXT above, and they matter
+   more here: this is the substance of every case study, not one
+   heading. `[data-js]` is stamped by the pre-paint script in
+   app/layout.tsx, so with no JS the prose simply renders. And a
+   reduced-motion reader is never handed a page of 28%-opacity
+   text with no way to reveal it — if the query is unsupported,
+   that also fails open to legible.
+
+   The floor itself comes from magic-text.tsx via
+   --magic-text-dim; the literal here is only a fallback.
+   ============================================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-js] [data-magic-word] {
+    opacity: var(--magic-text-dim, 0.28);
+  }
+}

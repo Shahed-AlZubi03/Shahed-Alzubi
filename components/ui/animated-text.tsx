@@ -1,7 +1,9 @@
 "use client";
 
-import { Fragment, useLayoutEffect, useEffect, useState } from "react";
+import { Fragment } from "react";
 import { motion } from "motion/react";
+
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 
 /**
  * Staggered entrance for a line of text, per letter or per word.
@@ -36,7 +38,8 @@ import { motion } from "motion/react";
  *    painted, disappeared, then animated in, for 48ms on a fast machine and
  *    371ms under a 6x CPU throttle.
  *
- *    The preference is read with `matchMedia` rather than Motion's
+ *    The preference is read (in `lib/use-prefers-reduced-motion.ts`, shared
+ *    with `magic-text.tsx`) with `matchMedia` rather than Motion's
  *    `useReducedMotion()`, which did not flip this branch in testing — the
  *    query matched and the letters animated anyway. It is subscribed live, so
  *    toggling the OS setting settles the text without a reload.
@@ -69,39 +72,6 @@ type AnimatedTextProps = {
   /** Element to render. Use a heading here when the text is one. */
   as?: "div" | "h1" | "h2" | "h3" | "p" | "span";
 };
-
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
-/**
- * Layout effect on the client, no-op on the server. Flipping `mounted` in a
- * layout effect rather than `useEffect` is deliberate: it commits before the
- * browser paints, so the swap from plain text to split spans never reaches the
- * screen. With `useEffect` the full line paints once and then blinks out as
- * the letters reset to their initial state.
- */
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? useEffect : useLayoutEffect;
-
-/**
- * Subscribes to the reduced-motion preference. Starts `true` so the first
- * client render matches the server, which cannot know the preference — and so
- * that the fallback, if the effect never runs, is the static one.
- */
-function usePrefersReducedMotion() {
-  const [prefersReduced, setPrefersReduced] = useState(true);
-
-  useIsomorphicLayoutEffect(() => {
-    const query = window.matchMedia(REDUCED_MOTION_QUERY);
-    setPrefersReduced(query.matches);
-
-    const onChange = (event: MediaQueryListEvent) =>
-      setPrefersReduced(event.matches);
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, []);
-
-  return prefersReduced;
-}
 
 export default function AnimatedText({
   text,
