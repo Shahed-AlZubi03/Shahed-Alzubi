@@ -63,11 +63,11 @@
   --fg-muted: #5c5344;
   --fg-subtle: #7a7060;
 
-  --accent: #d8bfd8;
-  --accent-hover: #c4a3c4;
-  --accent-contrast: #2e1a2b;
-  --accent-soft: rgb(216 191 216 / 0.10);
-  --accent-line: rgb(216 191 216 / 0.26);
+  --accent: #6b496e;
+  --accent-hover: #7d5980;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgb(107 73 110 / 0.10);
+  --accent-line: rgb(107 73 110 / 0.26);
 
   --glow: #f3e5ed;
 
