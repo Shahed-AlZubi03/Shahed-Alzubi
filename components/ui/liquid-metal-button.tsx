@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { clsx } from "@/lib/clsx";
 
 /**
- * Terracotta liquid-metal CTA. The WebGL sheen is a decorative layer painted
+ * Plum liquid-metal CTA. The WebGL sheen is a decorative layer painted
  * behind the label — the anchor itself stays a plain link, so the button works
  * with JS off, keyboard nav, and `prefers-reduced-motion` (where the shader is
  * skipped entirely and the token fill shows through instead).
@@ -16,9 +16,9 @@ import { clsx } from "@/lib/clsx";
  * the shader needs its full uniform set up front or the program fails to link.
  */
 
-/** Terracotta and sage, as the RGBA vec4s the shader wants (0–1, not 0–255). */
-const COLOR_BACK: [number, number, number, number] = [0.36, 0.17, 0.09, 1];
-const COLOR_TINT: [number, number, number, number] = [0.83, 0.55, 0.42, 1];
+/** Plum accent, as the RGBA vec4s the shader wants (0–1, not 0–255). */
+const COLOR_BACK: [number, number, number, number] = [0.19, 0.12, 0.2, 1];
+const COLOR_TINT: [number, number, number, number] = [0.62, 0.48, 0.63, 1];
 
 const IDLE_SPEED = 0.6;
 const HOVER_SPEED = 1;
