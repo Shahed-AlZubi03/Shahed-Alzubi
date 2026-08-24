@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { CaseSection, Prose } from "@/components/projects/CaseSection";
+import { StackMarquee } from "@/components/projects/StackMarquee";
 import { Container } from "@/components/ui/Container";
-import { Tag } from "@/components/ui/Tag";
 import type { Project } from "@/lib/projects";
 
 export function CaseStudy({
@@ -105,23 +105,7 @@ export function CaseStudy({
           </CaseSection>
 
           <CaseSection label="Tech Stack">
-            <dl className="flex flex-col gap-5">
-              {project.stack.map((group) => (
-                <div
-                  key={group.group}
-                  className="sm:grid sm:grid-cols-[9rem_1fr] sm:gap-6"
-                >
-                  <dt className="font-mono text-xs uppercase tracking-widest text-fg-muted sm:pt-1.5">
-                    {group.group}
-                  </dt>
-                  <dd className="mt-2 flex flex-wrap gap-2 sm:mt-0">
-                    {group.items.map((item) => (
-                      <Tag key={item}>{item}</Tag>
-                    ))}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <StackMarquee groups={project.stack} />
           </CaseSection>
 
           <CaseSection label="Outcome">
