@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PageTransition } from "@/components/motion/PageTransition";
 import { CaseStudy } from "@/components/projects/CaseStudy";
 import { getAllProjects, getProjectSlugs } from "@/lib/projects";
 
@@ -31,6 +32,8 @@ export default async function ProjectPage({
   if (index === -1) notFound();
 
   return (
-    <CaseStudy project={projects[index]} next={projects[index + 1]} />
+    <PageTransition>
+      <CaseStudy project={projects[index]} next={projects[index + 1]} />
+    </PageTransition>
   );
 }

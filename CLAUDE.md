@@ -25,8 +25,10 @@ answer "can this person build and ship the thing I need?"
   tokens live in `app/globals.css`.
 - Content: local JSON in `/content` — no CMS, no database
 - Deploy: Vercel (free subdomain first, custom domain later)
-- Framer Motion is **optional** and not installed. Only add it if animation
-  stays subtle and doesn't cost measurable performance.
+- Motion (`motion/react`) is installed and used for the per-letter hero name,
+  scroll-velocity tickers, the TOC marker and the scroll progress bar. Prefer
+  plain CSS (keyframes, `animation-timeline: view()`) wherever it can do the
+  job — the motion graphics are CSS-only by design.
 
 ## Design direction
 
@@ -41,16 +43,25 @@ Palette: warm cream ground with a plum accent.
   are what makes a palette change a one-file edit.
 - Type: Space Grotesk (headings, `font-display`), Inter (body, `font-sans`),
   JetBrains Mono (tags, labels, code, `font-mono`).
-- Motion: fade/slide-in on load only. No gimmicks. Respect
-  `prefers-reduced-motion`.
+- Ink panels (`bg-ink`, `text-ink-fg`, …) are the "screen" surface: hero
+  diagram, project covers, AI/ML tile, contact CTA.
+- Motion: purposeful motion graphics that show how systems work (request
+  traces, pipelines, detection) rather than decoration for its own sake.
+  Load-in rises, CSS scroll reveals (`.reveal`), sticky stacking project
+  cards, and a View Transition morph from card cover to case-study hero.
+  Every loop pauses off-screen (`<MotionStage>`), and everything must degrade
+  to a complete static page under `prefers-reduced-motion` and with JS off.
 
 ## Structure
 
 ```
 app/          routes: / , /projects , /projects/[slug] , /about , /contact
 components/
-  layout/     Navbar, Footer
-  ui/         Container, Section, ScaffoldNote
+  layout/     Navbar, Footer, ScrollProgress
+  home/       Hero, StackTicker, Skills (bento), ContactCta
+  motion/     AgentPipeline, MotionStage, PageTransition, Spotlight
+  projects/   ProjectCard, ProjectCover (per-slug animated SVG), CaseStudy, CaseToc
+  ui/         Container, Section, SectionHeading, Button, Tag
 content/
   projects/   one JSON per case study; filename === slug
 lib/
@@ -69,7 +80,9 @@ lib/
 - Vertical rhythm: `<Section>` — `py-section`, or `size="lg"` for
   `py-section-lg`.
 - Server Components by default. `"use client"` only where there's real
-  interactivity (Navbar menu).
+  interactivity (Navbar, TOC scrollspy, Spotlight, MotionStage, tickers).
+- A new case study gets a generic animated cover automatically; add a bespoke
+  one to the `covers` map in `components/projects/ProjectCover.tsx`.
 - Case-study copy is edited in `content/projects/*.json`, never in components.
 
 ## Working agreement

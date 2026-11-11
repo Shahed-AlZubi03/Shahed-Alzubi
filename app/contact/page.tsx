@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { ContactLinks } from "@/components/contact/ContactLinks";
+import { PageTransition } from "@/components/motion/PageTransition";
+import AnimatedText from "@/components/ui/animated-text";
 import { Section } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
@@ -11,26 +13,40 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
+    <PageTransition>
     <Section size="lg">
       <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
         <div>
-          <p className="font-mono text-xs uppercase tracking-widest text-accent">
+          <p className="animate-rise font-mono text-xs uppercase tracking-widest text-accent">
             Contact
           </p>
-          <h1 className="mt-4 text-balance text-h1 text-fg">
-            Let&apos;s talk
-          </h1>
-          <p className="mt-5 max-w-reading text-lg leading-relaxed text-fg-muted">
+          <AnimatedText
+            as="h1"
+            text="Let’s talk"
+            className="mt-4 text-display text-fg"
+            animationType="letters"
+            duration={0.5}
+            staggerDelay={0.045}
+            initialY={14}
+          />
+          <p
+            className="mt-6 max-w-reading animate-rise text-lg leading-relaxed text-fg-muted"
+            style={{ animationDelay: "160ms" }}
+          >
             Open to freelance and collaborative work — especially projects where
             AI has to be integrated into a real product, not just demoed. Email
             is the fastest way to reach me.
           </p>
         </div>
 
-        <div className="rounded-card border border-border bg-surface/90 p-6 md:p-8">
+        <div
+          className="animate-rise rounded-[1.5rem] border border-border bg-surface/90 p-6 shadow-lift backdrop-blur md:p-8"
+          style={{ animationDelay: "240ms" }}
+        >
           <ContactLinks />
         </div>
       </div>
     </Section>
+    </PageTransition>
   );
 }

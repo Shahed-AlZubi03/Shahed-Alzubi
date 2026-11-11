@@ -8,6 +8,7 @@ import { clsx } from "@/lib/clsx";
 import { navItems, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 import { TubelightNav } from "@/components/ui/tubelight-nav";
+import { ScrollProgress } from "@/components/layout/ScrollProgress";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -35,7 +36,10 @@ export function Navbar() {
   }, []);
 
   return (
+    // Named so route view transitions leave the header pinned while the page
+    // moves underneath it (VIEW TRANSITIONS in globals.css).
     <header
+      style={{ viewTransitionName: "site-header" }}
       className={clsx(
         "sticky top-0 z-50 border-b transition-colors duration-300",
         scrolled || open
@@ -43,13 +47,22 @@ export function Navbar() {
           : "border-transparent bg-transparent",
       )}
     >
+      <ScrollProgress />
       <Container className="relative flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
-          className="font-display text-[0.95rem] font-semibold tracking-tight text-fg"
+          className="group inline-flex items-center gap-2 font-display text-[0.95rem] font-semibold tracking-tight text-fg"
         >
-          {site.shortName}
-          <span className="text-accent">.</span>
+          <span
+            aria-hidden="true"
+            className="grid size-7 place-items-center rounded-lg bg-ink font-mono text-[0.7rem] text-ink-fg transition-transform duration-500 ease-out-expo group-hover:rotate-[-8deg]"
+          >
+            {site.shortName.charAt(0)}
+          </span>
+          <span>
+            {site.shortName}
+            <span className="text-accent">.</span>
+          </span>
         </Link>
 
         {/* Absolutely centred rather than left to `justify-between`: the pill

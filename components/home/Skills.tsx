@@ -1,93 +1,104 @@
-"use client";
-
-import { Table } from "@/components/ui/heroui-table";
-import { Tag } from "@/components/ui/Tag";
-import type { SkillGroup } from "@/lib/content";
 import { clsx } from "@/lib/clsx";
+import type { SkillGroup } from "@/lib/content";
 
 /**
- * Undoing three things the `secondary` variant does to column headers, all of
- * which read as foreign here: a `surface-secondary` fill plus a 32px corner
- * radius (together they float a filled capsule above the rows — the only such
- * shape in the section), and an `::after` tick between the two columns. What
- * is left is a mono label over a hairline, which is what the rest of the page
- * already uses. These land as utilities, so they win over HeroUI's rules in
- * the `components` layer without any `!important`.
+ * Capabilities as a bento grid, one tile per area in content/skills.json.
+ *
+ * The AI / ML tile is the heaviest — widest span, and the only ink tile — on
+ * purpose: it is the positioning ("AI-powered applications"), and the rest of
+ * the stack is what makes it shippable. It is pulled to the front with
+ * `order` so the two smaller tiles stack beside it instead of above it.
+ * Tiles are matched by group name, so a renamed or added group still
+ * renders; it just gets the default span.
  */
-const HEAD =
-  "rounded-none border-b border-border bg-transparent pb-3 font-mono text-xs uppercase tracking-widest text-fg-subtle after:content-none";
+const layout: Record<string, { span: string; ink?: boolean }> = {
+  "AI / ML": { span: "md:order-first md:col-span-4 md:row-span-2", ink: true },
+  Frontend: { span: "md:col-span-2" },
+  Backend: { span: "md:col-span-2" },
+  "Tools & Workflow": { span: "md:col-span-6" },
+};
 
-/**
- * The capability list as a real table.
- *
- * It was already a table in everything but markup — a label column beside a
- * run of chips, built out of `<dl>` and a CSS grid. Handing that to HeroUI's
- * Table (React Aria underneath) buys the semantics the grid was faking: a
- * `role="rowheader"` cell naming each area, real `columnheader`s, and
- * arrow-key navigation between rows.
- *
- * `variant="secondary"` is the unboxed one — no panel around the root, no
- * fill on the rows, just a hairline between them. That keeps the earlier
- * decision this section was built on: the case-study cards above are the
- * heavy elements on the page, so this block stays quiet and lets the ambient
- * gradient show through. `primary` would wrap the whole thing in a grey card
- * and put it in competition with them.
- *
- * Colours come from our tokens, not HeroUI's — see the HEROUI BRIDGE block in
- * app/globals.css for why that needed arranging.
- *
- * `"use client"` sits here and not just on the leaf: `Table.Cell` and friends
- * are properties hung off the `Table` function, and a client component
- * imported *into* a server component arrives as a reference proxy that carries
- * no such properties — every `Table.X` reads back undefined and the prerender
- * dies on "Element type is invalid". Declaring this file a client component
- * puts both sides in the same graph, so the compound API resolves normally.
- * The content is still read on the server in page.tsx and passed down as
- * props, so nothing here fetches at runtime and the page prerenders to HTML.
- *
- * The min-width is `sm:` and up on purpose. A table wide enough for the AI/ML
- * row does not fit a phone, and `Table.ScrollContainer` answers that with a
- * sideways scroll — fine for a data grid, wrong for this: it hides most of the
- * list off-screen behind a gesture nobody makes on a portfolio. Below `sm` the
- * table takes the viewport width instead and the chips wrap, which is what the
- * grid this replaced already did.
- */
 export function Skills({ groups }: { groups: SkillGroup[] }) {
   return (
-    <Table variant="secondary">
-      <Table.ScrollContainer>
-        <Table.Content
-          aria-label="Capabilities by area"
-          className="sm:min-w-[34rem]"
-        >
-          <Table.Header>
-            <Table.Column
-              isRowHeader
-              className={clsx(HEAD, "w-24 ps-0 sm:w-[11rem]")}
-            >
-              Area
-            </Table.Column>
-            <Table.Column className={HEAD}>Stack</Table.Column>
-          </Table.Header>
+    <ul className="grid gap-4 md:grid-cols-6">
+      {groups.map((group, index) => {
+        const tile = layout[group.group] ?? { span: "md:col-span-3" };
+        return (
+          <li
+            key={group.group}
+            className={clsx(
+              "reveal group relative overflow-hidden rounded-[1.25rem] border p-6 md:p-8",
+              tile.span,
+              tile.ink
+                ? "border-ink-line bg-ink text-ink-fg"
+                : "border-border bg-surface/85 backdrop-blur",
+            )}
+            style={{ "--reveal-delay": `${index * 6}%` } as React.CSSProperties}
+          >
+            {tile.ink ? <InkOrbit /> : null}
 
-          <Table.Body>
-            {groups.map((group) => (
-              <Table.Row key={group.group}>
-                <Table.Cell className="ps-0 pe-4 py-5 align-top font-mono text-xs uppercase tracking-widest text-fg-muted sm:pe-6">
-                  {group.group}
-                </Table.Cell>
-                <Table.Cell className="py-5">
-                  <div className="flex flex-wrap gap-2.5">
-                    {group.items.map((item) => (
-                      <Tag key={item}>{item}</Tag>
-                    ))}
-                  </div>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Content>
-      </Table.ScrollContainer>
-    </Table>
+            <div className="relative flex items-baseline justify-between gap-4">
+              <h3
+                className={clsx(
+                  "font-display text-xl font-semibold tracking-tight",
+                  tile.ink ? "text-ink-fg" : "text-fg",
+                )}
+              >
+                {group.group}
+              </h3>
+              <span
+                className={clsx(
+                  "font-mono text-xs",
+                  tile.ink ? "text-ink-muted" : "text-fg-subtle",
+                )}
+              >
+                {String(group.items.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <ul className="relative mt-6 flex flex-wrap gap-2">
+              {group.items.map((item) => (
+                <li
+                  key={item}
+                  className={clsx(
+                    "rounded-full border px-2.5 py-1 font-mono text-xs transition-colors duration-300",
+                    tile.ink
+                      ? "border-ink-line text-ink-muted hover:border-ink-accent hover:text-ink-fg"
+                      : "border-border text-fg-muted hover:border-accent-line hover:text-accent",
+                  )}
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/** Slow concentric orbits in the corner of the AI tile. Decorative. */
+function InkOrbit() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 200 200"
+      className="pointer-events-none absolute -bottom-20 -right-20 size-72 opacity-70"
+      fill="none"
+    >
+      <circle cx="100" cy="100" r="40" className="stroke-ink-line" />
+      <circle cx="100" cy="100" r="64" className="mg-spin stroke-ink-line" strokeDasharray="2 6" style={{ "--dur": "40s" } as React.CSSProperties} />
+      <circle cx="100" cy="100" r="88" className="stroke-ink-line" />
+      <g className="mg-spin" style={{ "--dur": "14s" } as React.CSSProperties}>
+        <circle cx="100" cy="100" r="64" className="stroke-transparent" />
+        <circle cx="164" cy="100" r="4" className="fill-ink-accent" />
+      </g>
+      <g className="mg-spin" style={{ "--dur": "22s" } as React.CSSProperties}>
+        <circle cx="100" cy="100" r="88" className="stroke-transparent" />
+        <circle cx="100" cy="12" r="3" className="fill-signal" />
+      </g>
+      <circle cx="100" cy="100" r="6" className="fill-ink-accent" />
+    </svg>
   );
 }

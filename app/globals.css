@@ -1,8 +1,5 @@
 @import "tailwindcss";
 
-/* HeroUI v3 — structural table CSS only. Tokens it expects are bridged onto
-   ours in the HEROUI BRIDGE block at the end of this file. */
-@import "@heroui/styles/components/table.css" layer(components);
 
 /* ============================================================
    DESIGN TOKENS
@@ -52,8 +49,23 @@
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
+  /* Ink — a deep plum-black used for the "screen" panels: the hero system
+     diagram, project covers, the AI/ML capability card and the contact CTA.
+     Dark panels on a cream page read as product surfaces, and they give the
+     motion graphics enough contrast to be legible at small sizes. */
+  --ink: #1f1520;
+  --ink-raised: #2b1f2d;
+  --ink-line: rgb(246 236 242 / 0.13);
+  --ink-fg: #f6ecf2;
+  --ink-muted: rgb(246 236 242 / 0.64);
+  --ink-accent: #d8a6cd;
+  /* Warm spark for "live" moments in the graphics — a siren, an active
+     stage, a completed check. Used sparingly so it keeps meaning something. */
+  --signal: #e7b05f;
+
   /* Decorative */
   --shadow-card: 0 1px 2px rgb(36 28 20 / 0.05), 0 8px 24px -14px rgb(36 28 20 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(36 28 20 / 0.04), 0 24px 48px -24px rgb(64 30 60 / 0.32);
 }
 
 @theme inline {
@@ -73,6 +85,13 @@
   --color-accent-soft: var(--accent-soft);
   --color-accent-line: var(--accent-line);
   --color-glow: var(--glow);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-ink-line: var(--ink-line);
+  --color-ink-fg: var(--ink-fg);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-accent: var(--ink-accent);
+  --color-signal: var(--signal);
 
   /* Typography — Space Grotesk headings / Inter body / JetBrains mono */
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -107,6 +126,7 @@
      `ease-out-expo` utility class. */
   --ease-out-expo: var(--ease-out-expo);
   --animate-rise: rise 0.7s var(--ease-out-expo) both;
+  --animate-pulse-dot: pulse-dot 2s ease-out infinite;
 }
 
 @keyframes rise {
@@ -176,80 +196,16 @@
   box-shadow: var(--shadow-card);
 }
 
-/* ============================================================
-   HEROUI BRIDGE
-   HeroUI v3 is Tailwind-v4-native: its component CSS ships raw
-   `@apply` and is compiled in *our* Tailwind context. Convenient —
-   it means the table inherits our palette instead of shipping its
-   own — but only if the token names it reaches for exist here.
-
-   What we do NOT import is `@heroui/styles/css`. That entry point
-   pulls `@import "tailwindcss"` a second time plus HeroUI's default
-   theme, and that theme redeclares --color-surface, --color-surface-
-   hover, --color-border, --color-accent, --color-accent-hover and
-   --color-accent-soft on a bare `:root`. Six direct collisions with
-   the tokens above: every `bg-surface`, `border-border` and
-   `text-accent` on the site would silently repoint to HeroUI's
-   grey/blue.
-
-   So: structural CSS only (imported at the top of this file), and
-   the aliases below. Every one resolves to a token declared above,
-   which is what keeps the table on our palette for free.
-   ============================================================ */
-
-@theme inline {
-  /* Surfaces. HeroUI's `secondary` surface is its header/zebra tone. */
-  --color-surface-secondary: var(--bg-subtle);
-  --color-surface-tertiary: var(--surface);
-
-  /* Text */
-  --color-foreground: var(--fg);
-  --color-muted: var(--fg-muted);
-
-  /* Lines. HeroUI splits these three ways and applies them at /50
-     opacity; ours is one border token, already tuned for hairlines. */
-  --color-separator: var(--border);
-  --color-separator-secondary: var(--border);
-  --color-separator-tertiary: var(--border);
-
-  /* Row hover. `default` is HeroUI's neutral interactive fill. */
-  --color-default: var(--surface-hover);
-
-  /* Focus. Matches the global :focus-visible ring in @layer base. */
-  --color-focus: var(--accent);
+@utility shadow-lift {
+  box-shadow: var(--shadow-lift);
 }
 
-:root {
-  /* Consumed as bare `var(--focus)` inside HeroUI's inset focus
-     shadows, so it needs a real value — not just the @theme alias. */
-  --focus: var(--accent);
-  --radius: 0.5rem;
-  --cursor-interactive: pointer;
-
-  /* Read by the `status-disabled` utility below. */
-  --disabled-opacity: 0.5;
-  --cursor-disabled: not-allowed;
-
-  /* Read by the `scrollbar` utility below. */
-  --scrollbar-width: thin;
-  --scrollbar-color: var(--border-strong) transparent;
-  --scrollbar-gutter: auto;
-}
-
-/* HeroUI's table CSS @applies exactly two of its own utilities. Declared
-   here rather than importing `@heroui/styles/utilities` — that file's other
-   utilities @apply ring-focus / outline-danger / ring-offset-background,
-   pulling in a further set of tokens this site has no use for. */
-@utility scrollbar {
-  scrollbar-width: var(--scrollbar-width);
-  scrollbar-color: var(--scrollbar-color);
-  scrollbar-gutter: var(--scrollbar-gutter);
-}
-
-@utility status-disabled {
-  opacity: var(--disabled-opacity);
-  cursor: var(--cursor-disabled);
-  pointer-events: none;
+/* Faint dot grid, used behind the hero. The mask fades it out toward the
+   edges so it reads as texture rather than as graph paper. */
+@utility bg-dots {
+  background-image: radial-gradient(var(--border-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 70% 60% at 40% 40%, black, transparent 75%);
 }
 
 /* ============================================================
@@ -297,4 +253,332 @@
   html[data-js] [data-magic-word] {
     opacity: var(--magic-text-dim, 0.28);
   }
+}
+
+/* ============================================================
+   MOTION GRAPHICS
+   Keyframes for the SVG graphics in components/motion/. They
+   are plain CSS on purpose: no JS drives them, so they cost
+   nothing to hydrate and render the same with JS off.
+
+   Two global switches apply to everything in this block:
+
+   - `prefers-reduced-motion: reduce` is already handled by the
+     catch-all in @layer base — each animation collapses to its
+     end state, which every graphic below is drawn to tolerate.
+   - `[data-offscreen]` is stamped by <MotionStage> while a
+     graphic is scrolled out of view, so off-screen loops stop
+     repainting instead of burning frames nobody can see.
+
+   SVG transforms need `transform-box: fill-box`, or scale and
+   rotate pivot around the SVG origin rather than the shape.
+   ============================================================ */
+
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}
+
+.mg-box {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* A short "comet" dash running the length of a connector. Every connector
+   carries pathLength="100", so one dash pattern fits paths of any length. */
+.mg-flow {
+  stroke-dasharray: 10 90;
+  stroke-dashoffset: 100;
+  opacity: 0;
+  animation: mg-flow var(--dur, 6s) linear infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-flow {
+  0% { stroke-dashoffset: 100; opacity: 0; }
+  2% { opacity: 1; }
+  13% { opacity: 1; }
+  15% { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* A node lighting up when the comet reaches it. */
+.mg-node {
+  opacity: 0;
+  animation: mg-node var(--dur, 6s) ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-node {
+  0% { opacity: 0; }
+  3% { opacity: 1; }
+  20% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Trace-log line: dim, then highlighted for its moment in the cycle. */
+.mg-log {
+  opacity: 0.32;
+  animation: mg-log var(--dur, 6s) ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-log {
+  0% { opacity: 0.32; }
+  3% { opacity: 1; }
+  18% { opacity: 1; }
+  26% { opacity: 0.32; }
+  100% { opacity: 0.32; }
+}
+
+/* Continuous dash march, for "always live" links. */
+.mg-march {
+  stroke-dasharray: 3 5;
+  animation: mg-march 1.2s linear infinite;
+}
+@keyframes mg-march {
+  to { stroke-dashoffset: -16; }
+}
+
+/* Audio / level-meter bars. */
+.mg-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: mg-bar 1.1s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-bar {
+  from { transform: scaleY(0.25); }
+  to { transform: scaleY(1); }
+}
+
+/* Expanding ring — a siren, a ping, a "listening" state. */
+.mg-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mg-ring 2.4s ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-ring {
+  from { transform: scale(0.4); opacity: 0.9; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* Horizontal drive across a cover, for the traffic graphic. */
+.mg-drive-x {
+  animation: mg-drive-x var(--dur, 7s) linear infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-drive-x {
+  from { transform: translateX(-140px); }
+  to { transform: translateX(560px); }
+}
+.mg-drive-y {
+  animation: mg-drive-y var(--dur, 6s) linear infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-drive-y {
+  from { transform: translateY(-120px); }
+  to { transform: translateY(380px); }
+}
+
+/* Vertical scan line sweeping a frame. */
+.mg-scan {
+  animation: mg-scan 3.2s ease-in-out infinite alternate;
+}
+@keyframes mg-scan {
+  from { transform: translateY(0); }
+  to { transform: translateY(var(--scan, 150px)); }
+}
+
+/* Staged reveal inside a fixed cycle — chat bubbles, transcript lines,
+   pipeline stages. Each element sets its own --d. */
+.mg-seq {
+  opacity: 0;
+  animation: mg-seq var(--dur, 8s) var(--ease-out-expo) infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-seq {
+  0% { opacity: 0; transform: translateY(6px); }
+  6% { opacity: 1; transform: translateY(0); }
+  85% { opacity: 1; transform: translateY(0); }
+  95% { opacity: 0; transform: translateY(0); }
+  100% { opacity: 0; }
+}
+
+/* A bar that fills across one cycle. */
+.mg-fill {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: mg-fill var(--dur, 8s) var(--ease-out-expo) infinite;
+}
+@keyframes mg-fill {
+  0% { transform: scaleX(0); }
+  80% { transform: scaleX(1); }
+  95% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* Traffic-light lamp cycling. */
+.mg-lamp {
+  animation: mg-lamp 7s steps(1, end) infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-lamp {
+  0% { opacity: 1; }
+  50% { opacity: 0.18; }
+  100% { opacity: 1; }
+}
+
+.mg-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mg-spin var(--dur, 24s) linear infinite;
+}
+@keyframes mg-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mg-float {
+  animation: mg-float 6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+@keyframes mg-float {
+  from { transform: translateY(-4px); }
+  to { transform: translateY(4px); }
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgb(107 73 110 / 0.45); }
+  70% { box-shadow: 0 0 0 8px rgb(107 73 110 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(107 73 110 / 0); }
+}
+
+/* Hero scroll cue: a short line sliding down a track. */
+@keyframes cue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+/* ============================================================
+   SCROLL REVEAL
+   Pure CSS, driven by `animation-timeline: view()`. No JS, so
+   nothing is ever hidden waiting on hydration, and the whole
+   thing is gated twice so content can never get stuck hidden:
+
+   - `@supports` — a browser without scroll-driven animations
+     simply shows the content, unanimated.
+   - `no-preference` — reduced-motion readers get static content.
+
+   `--reveal-delay` staggers siblings by shifting where in the
+   entry range each one starts.
+   ============================================================ */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry calc(5% + var(--reveal-delay, 0%)) entry calc(55% + var(--reveal-delay, 0%));
+    }
+
+    /* Draws a vertical line as its container scrolls through. The range
+       keeps the line's tip near the middle of the viewport: it starts when
+       the container's top reaches mid-screen (entry 50%) and finishes when
+       its bottom does (exit 50%). */
+    .draw-y {
+      transform-origin: top;
+      animation: draw-y linear both;
+      animation-timeline: --draw;
+      animation-range: entry 50% exit 50%;
+    }
+    .draw-scope {
+      view-timeline-name: --draw;
+    }
+
+    /* The footer wordmark rises out of the page edge. */
+    .rise-in {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes draw-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes rise-in {
+  from { transform: translateY(35%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================
+   VIEW TRANSITIONS
+   Route changes run inside React's <ViewTransition> (see
+   components/motion/PageTransition.tsx and the project cover).
+   The header is pinned so the page moves under a fixed anchor,
+   and a case-study cover morphs from its card into the hero.
+   ============================================================ */
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+::view-transition-old(.page-exit) {
+  animation: 160ms ease-in both vt-fade-out;
+}
+::view-transition-new(.page-enter) {
+  animation: 420ms var(--ease-out-expo) 100ms both vt-rise;
+}
+
+::view-transition-group(.morph) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: vt-via-blur;
+}
+
+@keyframes vt-fade-out {
+  to { opacity: 0; filter: blur(2px); }
+}
+@keyframes vt-rise {
+  from { opacity: 0; transform: translateY(16px); filter: blur(3px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes vt-via-blur {
+  35% { filter: blur(3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+@keyframes underline-draw {
+  to { stroke-dashoffset: 0; }
 }

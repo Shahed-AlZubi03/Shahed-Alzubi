@@ -1,19 +1,24 @@
 import { MagicText } from "@/components/ui/magic-text";
 
-/** One labelled block of a case study. Label sits above a hairline rule. */
+/** One labelled, numbered block of a case study. Label sits above a hairline. */
 export function CaseSection({
+  id,
+  index,
   label,
   children,
 }: {
+  id: string;
+  index: number;
   label: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-t border-border pt-8">
-      <h2 className="font-mono text-xs uppercase tracking-widest text-accent">
+    <section id={id} className="scroll-mt-28 border-t border-border pt-8">
+      <h2 className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-accent">
+        <span className="text-fg-subtle">{String(index).padStart(2, "0")}</span>
         {label}
       </h2>
-      <div className="mt-5">{children}</div>
+      <div className="mt-6">{children}</div>
     </section>
   );
 }
